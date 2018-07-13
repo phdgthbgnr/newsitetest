@@ -21,6 +21,12 @@ add_filter('wp_mail_from', 'new_mail_from');
 add_filter('wp_mail_from_name', 'new_mail_from_name');
 
 
+// add customm CSS admin
+
+function my_custom_fonts() {
+    echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/admin_style.css" type="text/css" media="all" />';
+}
+add_action('admin_head', 'my_custom_fonts');
 
 /*
 // initialisation les scripts
@@ -364,9 +370,20 @@ function restrict_adminnopriv()
         }
 }
 add_action( 'init', 'restrict_adminnopriv',1);
-require(get_template_directory().'/inc/ajax.php');
 
+// require(get_template_directory().'/inc/ajax.php');
 
+// if(is_admin()){
+//     wp_localize_script(
+//         'agendacommon',
+//         '_ajax_refreshprof',
+//         array(
+//             'id'=>$id,
+//             'url' => admin_url( 'admin-ajax.php' ),
+//             'nonce' => wp_create_nonce('refresh_nonce_calprof')
+//         )
+//     );
+// }
 
 /*
 // custom posts types
@@ -398,9 +415,15 @@ function movie_reviews_init() {
 add_action( 'init', 'movie_reviews_init' );
 */
 
-// custom fields
+
+
+
+
+
+// CUSTOM FIELDS OPTIONS SUPPLEMENTAIRES in POSTS ---------------------------------------------------------------
+
 function posts_options_add_meta_box() {
- 
+    // callback : posts_options_meta_box_callback
     $screens = array('post');
     foreach ( $screens as $screen ) {
         add_meta_box(
@@ -414,10 +437,11 @@ function posts_options_add_meta_box() {
         }
   }
 
-  function posts_options_meta_box_callback( $post ) {
+
+function posts_options_meta_box_callback( $post ) {
     // Add an nonce field so we can check for it later.
     wp_nonce_field( 'posts_options_meta_box', 'posts_options_meta_box_nonce' );
-     
+    
     /*
     * Use get_post_meta() to retrieve an existing value
     * from the database and use the value for the form.
@@ -425,55 +449,73 @@ function posts_options_add_meta_box() {
     $liendemo = get_post_meta( $post->ID, 'liendemo', true );
     $typeope = get_post_meta( $post->ID, 'typeope', true );
     $typeope = get_post_meta( $post->ID, 'tech', true );
-     
+    
     // form elements go here
-        //Photo Source
-        echo '<p class="layers-form-item">';
-        echo '<label>'.__('Lien demo', '').'</label> ';
-        // liens demos
-        echo '<input type="text" name="liendemo" id="liendemo" placeholder="lien vers la démo" value="'.(isset($liendemo)?$liendemo:'').'"/></p>';
+    //Photo Source
+    echo '<div class="optsupp">';
+    echo '<p class="metaboxoptions">';
+    echo '<label>'.__('Lien demo', '').'</label> ';
+    // liens demos
+    echo '<input type="text" name="liendemo" id="liendemo" placeholder="lien vers la démo" value="'.(isset($liendemo)?$liendemo:'').'"/></p>';
+    echo '<p class="metaboxoptions">';
+    echo '<label>'.__('Type d\'opération', '').'</label> ';
+    echo '<input type="text" name="typeope" id="typeope" placeholder="Type d\'opération" value="'.(isset($typeope)?$typeope:'').'"/></p>';
+    echo '<p class="metaboxoptions">';
+    echo '<label>'.__('Technique', '').'</label> ';
+    echo '<input type="text" name="tech" id="tech" placeholder="Technique" value="'.(isset($tech)?$tech:'').'"/></p>';
+    
+    echo '</div>';
+ 
+}
+add_action( 'add_meta_boxes', 'posts_options_add_meta_box' );
 
-        echo '<p class="layers-form-item">';
-        echo '<label>'.__('Type d\'opération', '').'</label> ';
-        echo '<input type="text" name="typeope" id="typeope" placeholder="Type d\'opération" value="'.(isset($typeope)?$typeope:'').'"/></p>';
 
-        echo '<p class="layers-form-item">';
-        echo '<label>'.__('Technique', '').'</label> ';
-        echo '<input type="text" name="tech" id="tech" placeholder="Technique" value="'.(isset($tech)?$tech:'').'"/></p>';
-        
-        echo '</p>';
-     
+function posts_options_save_meta_box_data( $post_id ) {
+    // Checks save status
+    $is_autosave = wp_is_post_autosave( $post_id );
+    $is_revision = wp_is_post_revision( $post_id );
+    $is_valid_nonce = ( isset( $_POST[ 'posts_options_meta_box_nonce' ] ) && wp_verify_nonce( $_POST[ 'posts_options_meta_box' ], basename( __FILE__ ) ) ) ? 'true' : 'false';
+    
+    // Exits script depending on save status
+    if ( $is_autosave || $is_revision || !$is_valid_nonce ) {
+   
+        return;
+    }
+    
+    // Checks for input and sanitizes/saves if needed
+    if( isset( $_POST[ 'liendemo' ] ) ) {
+    update_post_meta( $post_id, 'liendemo', sanitize_text_field( $_POST[ 'liendemo' ] ) );
+    }
+    if( isset( $_POST[ 'typeope' ] ) ) {
+    update_post_meta( $post_id, 'typeope', sanitize_text_field( $_POST[ 'typeope' ] ) );
+    }
+    if( isset( $_POST[ 'tech' ] ) ) {
+    update_post_meta( $post_id, 'tech', sanitize_text_field( $_POST[ 'tech' ] ) );
+    }
+}
+add_action( 'save_post', 'posts_options_save_meta_box_data' );
+
+
+
+
+
+   
+    // script JS gestion des techniques
+    add_action( 'wp_ajax_acgestion_tech', 'f_gestion_tech' );
+
+    function f_gestion_tech(){
+        $ret=wp_strip_all_tags($_POST['cid']);
+        $ret=intval($ret);
+        if(is_numeric($ret))
+        {
+            global $wpdb;
+            $table=$wpdb->prefix.'tech';
+            $res=$wpdb->delete($table,array('id'=>$ret));
+            echo json_encode($res);
+        }
     }
 
-    add_action( 'add_meta_boxes', 'posts_options_add_meta_box' );
-
-
-
-
-    function posts_options_save_meta_box_data( $post_id ) {
-        // Checks save status
-        $is_autosave = wp_is_post_autosave( $post_id );
-        $is_revision = wp_is_post_revision( $post_id );
-        $is_valid_nonce = ( isset( $_POST[ 'posts_options_meta_box_nonce' ] ) && wp_verify_nonce( $_POST[ 'posts_options_meta_box' ], basename( __FILE__ ) ) ) ? 'true' : 'false';
-        
-        // Exits script depending on save status
-        if ( $is_autosave || $is_revision || !$is_valid_nonce ) {
-       
-            return;
-        }
-        
-        // Checks for input and sanitizes/saves if needed
-        if( isset( $_POST[ 'liendemo' ] ) ) {
-        update_post_meta( $post_id, 'liendemo', sanitize_text_field( $_POST[ 'liendemo' ] ) );
-        }
-        if( isset( $_POST[ 'typeope' ] ) ) {
-        update_post_meta( $post_id, 'typeope', sanitize_text_field( $_POST[ 'typeope' ] ) );
-        }
-        if( isset( $_POST[ 'tech' ] ) ) {
-        update_post_meta( $post_id, 'tech', sanitize_text_field( $_POST[ 'tech' ] ) );
-        }
-    }
-
-    add_action( 'save_post', 'posts_options_save_meta_box_data' );
+    // add custom post tech elements
+    include('inc/gestion_tech.php');
 
 ?>

@@ -1,0 +1,13 @@
+.optsupp p.metaboxoptions{
+    border-top: 1px dashed #ccc;
+    padding-top: 1%;
+}
+
+.optsupp p.metaboxoptions label{
+    width:15%;
+    display: inline-block;
+}
+
+.optsupp p:first-child{
+    border-top: 0;
+}
