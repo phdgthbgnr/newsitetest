@@ -1,4 +1,22 @@
 <?php
+
+// script JS gestion des techniques
+add_action( 'wp_ajax_acgestion_tech', 'f_gestion_tech' );
+
+function f_gestion_tech(){
+    $ret=wp_strip_all_tags($_POST['cid']);
+    $ret=intval($ret);
+    if(is_numeric($ret))
+    {
+        global $wpdb;
+        $table=$wpdb->prefix.'tech';
+        $res=$wpdb->delete($table,array('id'=>$ret));
+        echo json_encode($res);
+    }
+}
+
+
+
 add_action('admin_menu','tech_panel');
 
 function tech_panel(){

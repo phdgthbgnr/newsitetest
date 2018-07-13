@@ -499,23 +499,9 @@ add_action( 'save_post', 'posts_options_save_meta_box_data' );
 
 
 
-   
-    // script JS gestion des techniques
-    add_action( 'wp_ajax_acgestion_tech', 'f_gestion_tech' );
 
-    function f_gestion_tech(){
-        $ret=wp_strip_all_tags($_POST['cid']);
-        $ret=intval($ret);
-        if(is_numeric($ret))
-        {
-            global $wpdb;
-            $table=$wpdb->prefix.'tech';
-            $res=$wpdb->delete($table,array('id'=>$ret));
-            echo json_encode($res);
-        }
-    }
 
-    // add custom post tech elements
-    include('inc/gestion_tech.php');
+// ADD CUSTOM POST GESTION TECHNIQUE ------------------------------------------------------------
+include('inc/gestion_tech.php');
 
 ?>
