@@ -17,6 +17,7 @@ function posts_options_add_meta_box() {
 
 
 function posts_options_meta_box_callback( $post ) {
+    global $wpdb;
     // Add an nonce field so we can check for it later.
     wp_nonce_field( 'posts_options_meta_box', 'posts_options_meta_box_nonce' );
     
@@ -41,11 +42,17 @@ function posts_options_meta_box_callback( $post ) {
     echo '<p class="metaboxoptions">';
     echo '<label>'.__('Technique', '').'</label> ';
     echo '<input type="text" name="tech" id="tech" placeholder="Technique" value="'.(isset($tech)?$tech:'').'"/></p>';
-    
+
+    // recup toutes les tech dispo
+    do_action('get_all_techs');
+
     echo '</div>';
  
 }
 add_action( 'add_meta_boxes', 'posts_options_add_meta_box' );
+//do_action('get_all_techs');
+
+
 
 
 function posts_options_save_meta_box_data( $post_id ) {

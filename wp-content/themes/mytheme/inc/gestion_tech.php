@@ -1,5 +1,7 @@
 <?php
 
+
+
 // script JS gestion des techniques
 add_action( 'wp_ajax_acgestion_tech', 'f_gestion_tech' );
 
@@ -20,9 +22,11 @@ function f_gestion_tech(){
 add_action('admin_menu','tech_panel');
 
 function tech_panel(){
-    add_menu_page('gestion des techniques','gestion des techniques','activate_plugins','tp','render_tp',null,81);
+    // add_menu_page('gestion des techniques','gestion des techniques','activate_plugins','tp','render_tp',null,81);
+    add_menu_page('gestion des techniques','gestion des techniques','manage_options','tp_settings','render_tp',null,81);
     
     global $wpdb;
+    
     $table = $wpdb->prefix.'tech';
     if($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
         $charset_collate = $wpdb->get_charset_collate();
@@ -36,12 +40,54 @@ function tech_panel(){
     }
 }
 
-// callback tech_panel
+
+
+
+
+// creation custom taxonomy (post,page)
+// add_action( 'init', 'create_topics_hierarchical_taxonomy', 0 );
+ 
+//create a custom taxonomy name it topics for your posts
+ 
+function create_topics_hierarchical_taxonomy() {
+ 
+// Add new taxonomy, make it hierarchical like categories
+//first do the translations part for GUI
+ 
+  $labels = array(
+    'name' => _x( 'Topics', 'taxonomy general name' ),
+    'singular_name' => _x( 'Topic', 'taxonomy singular name' ),
+    'search_items' =>  __( 'Search Topics' ),
+    'all_items' => __( 'All Topics' ),
+    'parent_item' => __( 'Parent Topic' ),
+    'parent_item_colon' => __( 'Parent Topic:' ),
+    'edit_item' => __( 'Edit Topic' ), 
+    'update_item' => __( 'Update Topic' ),
+    'add_new_item' => __( 'Add New Topic' ),
+    'new_item_name' => __( 'New Topic Name' ),
+    'menu_name' => __( 'Topics' ),
+  );    
+ 
+// Now register the taxonomy
+ 
+  register_taxonomy('topics',array('post','page'), array(
+    'hierarchical' => true,
+    'labels' => $labels,
+    'show_ui' => true,
+    'show_admin_column' => true,
+    'query_var' => true,
+    'rewrite' => array( 'slug' => 'topic' ),
+  ));
+ 
+}
+
+// callback add_menu_page tech_panel
 function render_tp()
 {
     global $wpdb;
     $error=false;
-    
+    global $post;
+    echo 'postID'.$post->ID;
     // ajout cp
     if(isset($_POST['action']))
     {
@@ -129,6 +175,8 @@ function render_tp()
         
 
         <?php
+
+        
         
         wp_register_script('gestiontech', get_template_directory_uri().'/js/suppr_tech.js', '', false, true);
         wp_enqueue_script('gestiontech');

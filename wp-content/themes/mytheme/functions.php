@@ -28,6 +28,54 @@ function my_custom_fonts() {
 }
 add_action('admin_head', 'my_custom_fonts');
 
+
+
+/*
+// customise login logo
+function my_login_logo() { ?>
+    <style type="text/css">
+        #login h1 a, .login h1 a {
+            background-image: url(<?php echo get_stylesheet_directory_uri(); ?>/images/login-logo.png);
+            padding-bottom: 30px;
+        }
+    </style>
+<?php }
+add_action( 'login_enqueue_scripts', 'my_login_logo' );
+*/
+
+
+
+/*
+// full customize login page
+function my_login_stylesheet() {
+    wp_enqueue_style( 'custom-login', get_template_directory_uri() . '/style-login.css' );
+    wp_enqueue_script( 'custom-login', get_template_directory_uri() . '/style-login.js' );
+}
+add_action( 'login_enqueue_scripts', 'my_login_stylesheet' );
+*/
+
+
+/*
+// remove menu items
+function remove_menus(){
+     if ( !current_user_can( 'manage_options' ) ) {
+          remove_menu_page( 'plugins.php' );
+     }
+}
+add_action( 'admin_menu', 'remove_menus' );
+*/
+
+
+/*
+// add excerpts to page
+add_action( 'init', 'my_add_excerpts_to_pages' );
+
+function my_add_excerpts_to_pages() {
+    add_post_type_support( 'page', 'excerpt' );
+}
+*/
+
+
 /*
 // initialisation les scripts
 function initialiser_scripts() {
@@ -416,17 +464,31 @@ add_action( 'init', 'movie_reviews_init' );
 */
 
 
+// ADD CUSTOM POST GESTION TECHNIQUE ------------------------------------------------------------
+if(is_admin()) include('inc/gestion_tech.php');
+
+// enregistrement hook -- affichage de la liste des technique
+
+add_action('get_all_techs','return_all_techs');
+
+function return_all_techs(){
+    global $wpdb;
+    $table=$wpdb->prefix.'tech';
+    $sql=$wpdb->prepare("SELECT * from $table ORDER BY 'tp' DESC",1);
+    $rows = $wpdb->get_results($sql,ARRAY_A);
+    $res= '<p class="metaboxoptions">';
+    foreach ($rows as $k=>$v){
+        $res.='<label style="text-align:right;padding-right:2%">'.$v['tp'].'</label><input type="checkbox" name="techs[]" value="'.$v['id'].'"/>';
+    }
+    $res.='</p>';
+    echo  $res;
+}
 
 
 
 // CUSTOM FIELDS OPTIONS SUPPLEMENTAIRES in POSTS ---------------------------------------------------------------
-
 if(is_admin()) include('inc/CF_options-supp.php');
 
 
-
-
-// ADD CUSTOM POST GESTION TECHNIQUE ------------------------------------------------------------
-if(is_admin()) include('inc/gestion_tech.php');
 
 ?>
