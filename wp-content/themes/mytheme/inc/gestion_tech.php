@@ -129,6 +129,7 @@ function render_tp()
         
 
         <?php
+        
         wp_register_script('gestiontech', get_template_directory_uri().'/js/suppr_tech.js', '', false, true);
         wp_enqueue_script('gestiontech');
         wp_localize_script( 'gestiontech', 'gestion_tech', array(
