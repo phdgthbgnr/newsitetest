@@ -44,7 +44,7 @@ function tech_panel(){
 
 
 
-// creation custom taxonomy (post,page)
+// creation custom taxonomy (post,page) ---------------------------------------------------------------------------
 // add_action( 'init', 'create_topics_hierarchical_taxonomy', 0 );
  
 //create a custom taxonomy name it topics for your posts
@@ -80,6 +80,11 @@ function create_topics_hierarchical_taxonomy() {
   ));
  
 }
+
+// -------------------------------------------------------------------------------------------------------------------
+
+
+
 
 // callback add_menu_page tech_panel
 function render_tp()
@@ -175,8 +180,6 @@ function render_tp()
         
 
         <?php
-
-        
         
         wp_register_script('gestiontech', get_template_directory_uri().'/js/suppr_tech.js', '', false, true);
         wp_enqueue_script('gestiontech');

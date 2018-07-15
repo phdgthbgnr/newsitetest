@@ -22,12 +22,60 @@ add_filter('wp_mail_from_name', 'new_mail_from_name');
 
 
 // add customm CSS admin
-
 function my_custom_fonts() {
     echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/admin_style.css" type="text/css" media="all" />';
 }
 add_action('admin_head', 'my_custom_fonts');
 
+
+
+// add featured images -----------------------------------------------------------------------------------------------------
+add_theme_support( 'post-thumbnails' );
+// set custom size
+// set_post_thumbnail_size( 50, 50);
+// add image size to use with the_post_thumbnail() 
+// add_image_size( 'single-post-thumbnail', 590, 180 );
+
+// FRONT : 
+// the_post_thumbnail( 'single-post-thumbnail' );
+
+//FALLBACK :
+/*
+if ( has_post_thumbnail() ) {
+    the_post_thumbnail();
+    } else { ?>
+    <img src="<?php bloginfo('template_directory'); ?>/images/default-image.jpg" alt="<?php the_title(); ?>" />
+    <?php } ?>
+*/
+// OR:
+/*
+//function to call first uploaded image in functions file
+function main_image() {
+    $files = get_children('post_parent='.get_the_ID().'&post_type=attachment
+    &post_mime_type=image&order=desc');
+      if($files) :
+        $keys = array_reverse(array_keys($files));
+        $j=0;
+        $num = $keys[$j];
+        $image=wp_get_attachment_image($num, 'large', true);
+        $imagepieces = explode('"', $image);
+        $imagepath = $imagepieces[1];
+        $main=wp_get_attachment_url($num);
+            $template=get_template_directory();
+            $the_title=get_the_title();
+        print "<img src='$main' alt='$the_title' class='frame' />";
+      endif;
+    }
+
+    //front :
+    if (  (function_exists('has_post_thumbnail')) && (has_post_thumbnail())  ) {
+    echo get_the_post_thumbnail($post->ID);
+    } else {
+    echo main_image();
+    }
+*/
+
+// -----------------------------------------------------------------------------------------------------------------------
 
 
 /*
@@ -66,307 +114,13 @@ add_action( 'admin_menu', 'remove_menus' );
 */
 
 
-/*
+
 // add excerpts to page
 add_action( 'init', 'my_add_excerpts_to_pages' );
 
 function my_add_excerpts_to_pages() {
     add_post_type_support( 'page', 'excerpt' );
 }
-*/
-
-
-/*
-// initialisation les scripts
-function initialiser_scripts() {
-    if(!is_admin())
-    {
-        wp_deregister_script('jquery');
- 		wp_register_script('jquery','http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js', '',false, true);
-        
-        //wp_register_script('jqueryuicustmin', get_template_directory_uri().'/js/jquery-ui.custom.min.js', false, '');
-        
-        // charger jQuery
-		wp_enqueue_script('jquery');
-        
-        $logged='no';
-            
-        if ( is_user_logged_in())
-        {
-        
-            $current_user = wp_get_current_user();
-            if($current_user->roles[0]=='appren')
-            {
-                $logged='appren';
-            }
-            
-             if($current_user->roles[0]=='prof')
-            {
-                $logged='prof';
-            }
-        }
-        
-        if( is_page_template('template-agendaprof.php'))
-        {
-            wp_register_style('jqueryuicustmincss',get_template_directory_uri().'/js/jquery-ui-1.10.3.custom.css','',false,'screen');
-            wp_register_style('fullcalendarcss',get_template_directory_uri().'/js/fullcalendar/fullcalendar.css','',false,'screen');
-            wp_register_style('fullcalendarprintcss',get_template_directory_uri().'/js/fullcalendar/fullcalendar.print.css','',false,'print');
-            wp_enqueue_style( 'jqueryuicustmincss' );
-            wp_enqueue_style( 'fullcalendarcss' );
-            wp_enqueue_style( 'fullcalendarprintcss' );
-            
-            
-            wp_register_script('jqueryuicustmin', get_template_directory_uri().'/js/jquery-ui-1.10.3.custom.min.js', '', false, true);
-            wp_register_script('fullcalendarmin', get_template_directory_uri().'/js/fullcalendar/fullcalendar.min.js','', false, true);
-            wp_enqueue_script('jqueryuicustmin');
-            wp_enqueue_script('fullcalendarmin');
-            
-            // chargement JS prof
-            if($logged=='prof')
-            {
-                wp_register_script('agendaprof', get_template_directory_uri().'/js/agenda-prof.js','', false, true);
-                wp_enqueue_script('agendaprof');
-                
-                // refresh
-                wp_localize_script(
-                    'agendaprof',
-                    '_ajax_refreshprof',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('refresh_nonce_calprof')
-                    )
-                );
-                
-                // eventresize
-                wp_localize_script(
-                    'agendaprof',
-                    '_ajax_eventResize',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('resize_nonce_event')
-                    )
-                );
-                
-                 // eventdrop
-                wp_localize_script(
-                    'agendaprof',
-                    '_ajax_eventDrop',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('drop_nonce_event')
-                    )
-                );
-                
-                if(is_page('planning-professeur'))
-                {
-                    wp_localize_script(
-                        'agendaprof',
-                        '_ajax_resumecoursprof',
-                        array(
-                            'url' => admin_url( 'admin-ajax.php' ),
-                            'nonce' => wp_create_nonce('resumecours_nonce_prof')
-                        )
-                    );
-                    }
-                
-            }
-            
-            // chargement JS common (non logué)
-            if($logged=='no')
-            {
-                wp_register_script('agendacommon', get_template_directory_uri().'/js/agenda-common.js','', false, true);
-                wp_enqueue_script('agendacommon');
-                
-                $id=0;
-                if($_GET && isset($_GET['id'])) $id=wp_strip_all_tags($_GET['id']);
-                
-                 wp_localize_script(
-                    'agendacommon',
-                    '_ajax_refreshprof',
-                    array(
-                        'id'=>$id,
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('refresh_nonce_calprof')
-                    )
-                );
-                
-            }
-            
-            // chargement JS apprenant (connexion au planning du professeur
-            if($logged=='appren' && !is_page('planning-eleve'))
-            {
-                wp_register_script('agendappren', get_template_directory_uri().'/js/agenda-appren.js','', false, true);
-                wp_enqueue_script('agendappren');
-                
-                $id=0;
-                if($_GET && isset($_GET['id'])) $id=wp_strip_all_tags($_GET['id']);
-                
-                 wp_localize_script(
-                    'agendappren',
-                    '_ajax_refreshprofappren',
-                    array(
-                        'id'=>$id,
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('refresh_nonce_appren')
-                    )
-                );
-                
-                wp_localize_script(
-                    'agendappren',
-                    '_ajax_reserve',
-                    array(
-                        'id'=>$id,
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('reserve_nonce_event')
-                    )
-                );
-                
-                wp_localize_script(
-                    'agendappren',
-                    '_ajax_deprogramm',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('deprogramm_nonce_event')
-                    )
-                );
-                
-                wp_localize_script(
-                    'agendappren',
-                    '_ajax_testconso',
-                    array(
-                        'id'=>$current_user->ID,
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('testconso_nonce')
-                    )
-                );
-                
-                
-            }
-            
-            if($logged=='appren' && is_page('planning-eleve'))
-            {
-                
-                wp_register_script('appren-priv', get_template_directory_uri().'/js/agenda-appren-priv.js', '', false, true);
-                wp_enqueue_script('appren-priv');
-                
-                wp_register_style('fancyboxcss',get_template_directory_uri().'/js/fancybox/jquery.fancybox.css','',false,'screen');
-                wp_enqueue_style( 'fancyboxcss' );
-                
-                wp_register_script('fancybox', get_template_directory_uri().'/js/fancybox/jquery.fancybox.pack.js', '', false, true);
-                wp_enqueue_script('fancybox');
-                
-                wp_localize_script(
-                    'appren-priv',
-                    '_ajax_refreshapprenpriv',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('refreshpriv_nonce_appren')
-                    )
-                );
-                
-                 wp_localize_script(
-                    'appren-priv',
-                    '_ajax_resumecours',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('resumecours_nonce_appren')
-                    )
-                );
-                
-                wp_localize_script(
-                    'appren-priv',
-                    '_ajax_evaluercours',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('evaluercours_nonce_appren')
-                    )
-                );
-                
-                wp_localize_script(
-                    'appren-priv',
-                    '_ajax_affeval',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('affeval_nonce_appren')
-                    )
-                );
-                
-                wp_localize_script(
-                    'appren-priv',
-                    '_ajax_valider',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('valider_nonce_appren')
-                    )
-                );
-				
-				wp_localize_script(
-                    'appren-priv',
-                    '_ajax_validerplann',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('validerplann_nonce_appren')
-                    )
-                );
-                
-                wp_localize_script(
-                    'agendappren',
-                    '_ajax_deprogramm',
-                    array(
-                        'url' => admin_url( 'admin-ajax.php' ),
-                        'nonce' => wp_create_nonce('deprogramm_nonce_event')
-                    )
-                );
-                
-            }
-                
-        }
-        
-        if( is_page_template('template-inscription.php'))
-        {
-            wp_register_script('inscription', get_template_directory_uri().'/js/inscription.js', '', false, true);
-            wp_enqueue_script('inscription');
-        }
-        
-         if( is_page_template('template-profilprof.php') && $logged=='prof')
-        {
-            wp_register_script('profprofil', get_template_directory_uri().'/js/profilprof.js', '', false, true);
-            wp_enqueue_script('profprofil');
-        }
-        
-            
-        if( is_page_template('template-profileleve.php') && $logged=='appren')
-        {
-            wp_register_script('inscription', get_template_directory_uri().'/js/inscription.js', '', false, true);
-            wp_enqueue_script('inscription');
-        }
-        
-        if( is_page_template('template-contact.php'))
-        {
-            wp_register_style('jqueryuicustmincss',get_template_directory_uri().'/js/jquery-ui-1.10.3.custom.css','',false,'screen');
-            wp_enqueue_style( 'jqueryuicustmincss' );
-            wp_register_script('jqueryuicustmin', get_template_directory_uri().'/js/jquery-ui-1.10.3.custom.min.js', '', false, true);
-            wp_register_script('contact', get_template_directory_uri().'/js/contact.js', '', false, true);
-            wp_enqueue_script('jqueryuicustmin');
-            wp_enqueue_script('contact');
-        }
-        
-        if( is_category() )
-        {
-            wp_register_script('infoprof', get_template_directory_uri().'/js/info-prof.js', '', false, true);
-            wp_enqueue_script('infoprof');
-        }
-        
-        if(is_page_template('template-recherchercours.php'))
-        {
-            wp_register_script('rechercours', get_template_directory_uri().'/js/rechercours.js', '', false, true);
-            wp_enqueue_script('rechercours');
-        }
-    }
-}
-add_action('wp_enqueue_scripts', 'initialiser_scripts');
-*/
-
 
 
 // Hide Administrator From User List 
@@ -467,21 +221,40 @@ add_action( 'init', 'movie_reviews_init' );
 // ADD CUSTOM POST GESTION TECHNIQUE ------------------------------------------------------------
 if(is_admin()) include('inc/gestion_tech.php');
 
-// enregistrement hook -- affichage de la liste des technique
 
+
+// enregistrement hook -- affichage de la liste des technique
 add_action('get_all_techs','return_all_techs');
 
 function return_all_techs(){
-    global $wpdb;
+    global $wpdb, $post;
     $table=$wpdb->prefix.'tech';
     $sql=$wpdb->prepare("SELECT * from $table ORDER BY 'tp' DESC",1);
     $rows = $wpdb->get_results($sql,ARRAY_A);
     $res= '<p class="metaboxoptions">';
     foreach ($rows as $k=>$v){
-        $res.='<label style="text-align:right;padding-right:2%">'.$v['tp'].'</label><input type="checkbox" name="techs[]" value="'.$v['id'].'"/>';
+        $res.='<label style="text-align:right;padding-right:2%">'.$v['tp'].'</label><input type="checkbox" name="techs[]" value="'.$v['id'].'" '.getcheck_tech($post->ID, $v['id'] ).'/>';
     }
     $res.='</p>';
     echo  $res;
+}
+
+// verifie checkbox value
+function getcheck_tech($postid, $val)
+{
+    $arr=get_post_meta( $postid, 'gtechs', true );
+    $tbarr=explode(' ',$arr);
+    if(is_array($tbarr))
+    {
+        if(in_array($val,$tbarr))
+        {
+            return ' CHECKED="CHECKED"';
+        }else{
+            return '';
+        }
+    }else{
+        return '';
+    }
 }
 
 

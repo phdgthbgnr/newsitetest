@@ -27,7 +27,8 @@ function posts_options_meta_box_callback( $post ) {
     */
     $liendemo = get_post_meta( $post->ID, 'liendemo', true );
     $typeope = get_post_meta( $post->ID, 'typeope', true );
-    $typeope = get_post_meta( $post->ID, 'tech', true );
+    $client = get_post_meta( $post->ID, 'client', true );
+    $tech = get_post_meta( $post->ID, 'tech', true );
     
     // form elements go here
     //Photo Source
@@ -40,10 +41,13 @@ function posts_options_meta_box_callback( $post ) {
     echo '<label>'.__('Type d\'opération', '').'</label> ';
     echo '<input type="text" name="typeope" id="typeope" placeholder="Type d\'opération" value="'.(isset($typeope)?$typeope:'').'"/></p>';
     echo '<p class="metaboxoptions">';
+    echo '<label>'.__('Client final', '').'</label> ';
+    echo '<input type="text" name="client" id="client" placeholder="Client final" value="'.(isset($client)?$client:'').'"/></p>';
+    echo '<p class="metaboxoptions">';
     echo '<label>'.__('Technique', '').'</label> ';
     echo '<input type="text" name="tech" id="tech" placeholder="Technique" value="'.(isset($tech)?$tech:'').'"/></p>';
 
-    // recup toutes les tech dispo
+    // recup toutes les tech dispo (CHECKBOX) get_all_techs in functions.php
     do_action('get_all_techs');
 
     echo '</div>';
@@ -63,7 +67,6 @@ function posts_options_save_meta_box_data( $post_id ) {
     
     // Exits script depending on save status
     if ( $is_autosave || $is_revision || !$is_valid_nonce ) {
-   
         return;
     }
     
@@ -74,10 +77,23 @@ function posts_options_save_meta_box_data( $post_id ) {
     if( isset( $_POST[ 'typeope' ] ) ) {
     update_post_meta( $post_id, 'typeope', sanitize_text_field( $_POST[ 'typeope' ] ) );
     }
+    if( isset( $_POST[ 'client' ] ) ) {
+    update_post_meta( $post_id, 'client', sanitize_text_field( $_POST[ 'client' ] ) );
+    }
     if( isset( $_POST[ 'tech' ] ) ) {
     update_post_meta( $post_id, 'tech', sanitize_text_field( $_POST[ 'tech' ] ) );
     }
+
+    if(isset($_POST['techs']) && is_array($_POST['techs'])){
+        $tbp=$_POST['techs'];
+        $techs=implode(" ", $tbp);
+        update_post_meta( $post_id, 'gtechs', $techs );
+    }else{
+        update_post_meta( $post_id, 'gtechs', '' );
+    }
 }
 add_action( 'save_post', 'posts_options_save_meta_box_data' );
+
+
 
 ?>

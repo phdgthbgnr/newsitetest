@@ -27,5 +27,4 @@ get_header(); ?>
 
     </div><!-- #container -->
 <?php 
-do_action('get_all_techs');
 get_footer(); ?>
