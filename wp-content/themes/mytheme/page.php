@@ -15,9 +15,10 @@
 
 
 get_header(); ?>
+page
         <!--<h1 class="titre" style="margin-bottom:20px"><?php  wp_title(''); ?></h1>-->
 			<div id="content" role="main">
-                lkklklk
+               
 				<?php while ( have_posts() ) : the_post(); ?>
 
 					<?php get_template_part( 'content', 'page' ); ?>

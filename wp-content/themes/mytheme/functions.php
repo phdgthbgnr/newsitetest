@@ -74,7 +74,7 @@ function main_image() {
     echo main_image();
     }
 */
-
+// add multiple featured images : https://www.wpbeginner.com/plugins/how-to-add-multiple-post-thumbnails-featured-images-in-wordpress/
 // -----------------------------------------------------------------------------------------------------------------------
 
 

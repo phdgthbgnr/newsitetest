@@ -71,5 +71,5 @@ $vers=$_SERVER['HTTP_USER_AGENT'];
         </header>
         <!-- fin #masthead -->
         <div id="main" class="site-main">
-            lizaiuiauez
+           
         </div>

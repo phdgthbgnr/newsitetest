@@ -20,8 +20,8 @@
         (function(){
             // chargement bootsrtap
             var deferring = [
-                '<?php echo get_template_directory_uri() ?>/js/jquery-3.1.1.min.js',
                 '<?php echo get_template_directory_uri() ?>/bootstrap412/css/bootstrap.min.css',
+                '<?php echo get_template_directory_uri() ?>/js/jquery-3.1.1.min.js',
                 '<?php echo get_template_directory_uri() ?>/bootstrap412/js/bootstrap.min.js'
             ],
             
