@@ -22,13 +22,15 @@
             var deferring = [
                 '<?php echo get_template_directory_uri() ?>/bootstrap412/css/bootstrap.min.css',
                 '<?php echo get_template_directory_uri() ?>/js/jquery-3.1.1.min.js',
-                '<?php echo get_template_directory_uri() ?>/bootstrap412/js/bootstrap.min.js'
+                '<?php echo get_template_directory_uri() ?>/bootstrap412/js/bootstrap.min.js',
+                '<?php echo get_template_directory_uri() ?>/style.css',
+                '<?php echo get_template_directory_uri() ?>/js/ajaxcall.js'
             ],
             
             _i=0,
 
             initAfter = function(){
-                console.log('css et js chargés')
+                console.log('css et js chargés');
             },
 
             downloadJSAtOnload = function(arr, callback) {
@@ -79,7 +81,7 @@
 
             DomLoaded = function(e){
                 // if(ie9) deferjs1.push('_js/pointereventspolyfill.js');
-                downloadJSAtOnload(deferring, initAfter);
+                //downloadJSAtOnload(deferring, initAfter);
             };
 
             if (window.addEventListener){

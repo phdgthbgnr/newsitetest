@@ -215,7 +215,32 @@ function movie_reviews_init() {
     register_post_type( 'movie-reviews', $args );
 }
 add_action( 'init', 'movie_reviews_init' );
+
 */
+
+// chargement JQUERY / BOOSTRAP
+
+if(!is_admin()){
+    wp_register_style('bootstrapcss',get_template_directory_uri().'/bootstrap412/css/bootstrap.min.css','',false,'screen');
+    wp_enqueue_style( 'bootstrapcss' );
+
+    wp_deregister_script('jquery');
+    wp_register_script('jquery',get_template_directory_uri().'/js/jquery-3.1.1.min.js', '',false, true);
+    wp_enqueue_script('jquery');
+
+    wp_register_script('bootstrapjs',get_template_directory_uri().'/bootstrap412/js/bootstrap.min.js', '',false, true);
+    wp_enqueue_script('bootstrapjs');
+
+    wp_register_style('styles',get_template_directory_uri().'/style.css','',false,'screen');
+    wp_enqueue_style( 'styles' );
+                    
+    // wp_register_script('load_with_ajax', get_template_directory_uri().'/js/ajaxcall.js', array('jquery'), false, true);
+    // wp_enqueue_script('load_with_ajax');
+    // wp_localize_script( 'load_with_ajax', 'loadwithajax', array(
+    //     'ajaxurl' => admin_url( 'admin-ajax.php' )
+    // ));
+}
+
 
 
 // ADD CUSTOM POST GESTION TECHNIQUE ------------------------------------------------------------
@@ -262,6 +287,7 @@ function getcheck_tech($postid, $val)
 // CUSTOM FIELDS OPTIONS SUPPLEMENTAIRES in POSTS ---------------------------------------------------------------
 if(is_admin()) include('inc/CF_options-supp.php');
 
-
+// ADD AJAX LOADING
+include('inc/loading_by_ajax.php');
 
 ?>

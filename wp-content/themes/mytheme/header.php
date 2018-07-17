@@ -44,32 +44,66 @@ $vers=$_SERVER['HTTP_USER_AGENT'];
     <div id="page" class="container">
         <?php
             //if(is_front_page())
-            $accueil=get_site_url();
-            if(is_front_page())
-            {
-                $args = array(
-                    'post_type' => 'attachment',
-                    'name' => sanitize_title('dpg-logo-home'),
-                    'posts_per_page' => 1,
-                    'post_status' => 'inherit',
-                );
-            }else{
-                $args = array(
-                    'post_type' => 'attachment',
-                    'name' => sanitize_title('dpg-logo-home'),
-                    'posts_per_page' => 1,
-                    'post_status' => 'inherit',
-                );
+            // $accueil=get_site_url();
+            // if(is_front_page())
+            // {
+            //     $args = array(
+            //         'post_type' => 'attachment',
+            //         'name' => sanitize_title('dpg-logo-home'),
+            //         'posts_per_page' => 1,
+            //         'post_status' => 'inherit',
+            //     );
+            // }else{
+            //     $args = array(
+            //         'post_type' => 'attachment',
+            //         'name' => sanitize_title('dpg-logo-home'),
+            //         'posts_per_page' => 1,
+            //         'post_status' => 'inherit',
+            //     );
+            // }
+            // $img=get_posts($args);
+            // if($img) $src=wp_get_attachment_url($img[0]->ID);
+            $curcat='0';
+            $parentcat='0';
+            $cat=get_the_category($post->ID);
+            if(count($cat)>0) {
+                    $curcat=$cat[0]->term_id;
+                    $parentcat=$cat[0]->parent;
             }
-            $img=get_posts($args);
-            if($img) $src=wp_get_attachment_url($img[0]->ID);
+            $root = get_category_by_slug( 'realisations' );
+            $args = array(
+                'type'                     => 'post',
+                'child_of'                 => $root->term_id,
+                'parent'                   => '',
+                'orderby'                  => 'custom_sort',
+                'order'                    => 'ASC',
+                'hide_empty'               => 0,
+                'hierarchical'             => 1,
+                'exclude'                  => '',
+                'include'                  => '',
+                'number'                   => '',
+                'taxonomy'                 => 'category',
+                'pad_counts'               => true 
+            
+            );
+            $categories = get_terms('category', $args );
         ?>
-        <!-- #masthead -->
-        <header id="masthead" class="row" role="banner">
-            <div class="col-12 col-md-8">.col-12 .col-md-8</div>
-            <div class="col-6 col-md-4">.col-6 .col-md-4</div>
-        </header>
-        <!-- fin #masthead -->
-        <div id="main" class="site-main">
-           
+        <!-- nav -->
+        <div class="row" style="padding:1% 0">
+        <!-- <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light"> -->
+        <nav id="navbar" class="nav nav-pills nav-fill flex-column flex-sm-row">
+            <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> -->
+                <!-- <ul class="nav nav-pills nav-fill"> -->
+                <?php foreach ( $categories as $category ) { ?>
+                    <!-- <li class="nav-item"> -->
+                        <a href="<?php echo get_category_link( $category->term_id ) ?>" class="nav-item nav-link <?php  echo $category->term_id==$curcat?'active"':''; echo $category->count==0?' disabled"':''?>"><?php echo $category->name ?></a>
+                    <!-- </li> -->
+                <?php } ?>
+                <!-- </ul> -->
+            </nav>
+        <!-- </nav> -->
         </div>
+        <!-- fin #masthead -->
+        <!-- <div id="main" class="site-main">
+           
+        </div> -->

@@ -6,15 +6,16 @@
     $count = count($posts); 
 	//wp_reset_query();
 ?>
-    <div class="nbcat">x<span><?php echo $count; ?></span></div>
+    <!-- <div class="nbcat">x<span><?php echo $count; ?></span></div> -->
         
         <!-- <ul class="rubrique"> -->
-        <div class="container">
-            <div class="row">
+        <div class="row">
+            <!-- <div class="row align-items-center no-gutters"> -->
+            <div class="card-group">
             <?php
        
-                while ( have_posts() ) : the_post(); 
-    
+                while ( have_posts() ) : 
+                    the_post();
                     get_template_part( 'content-category', get_post_format() ); 
 
 					endwhile; // end of the loop. 
@@ -22,6 +23,7 @@
 				?>
             <!-- </ul> -->
             </div>
+            <!-- </div> -->
         </div>
 
 <?php get_footer(); ?>
