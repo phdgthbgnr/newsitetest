@@ -708,7 +708,6 @@
     
         }());
     
-    
         return crossroads;
     };
     

@@ -1,4 +1,7 @@
 <?php 
+    // fichier inutile
+    // le templat est déporté dans loading_by_ajax
+    
     get_header(); 
     $cur_cat = get_cat_ID( single_cat_title("",false) );
 	query_posts( 'posts_per_page=-1&cat='.$cur_cat);
