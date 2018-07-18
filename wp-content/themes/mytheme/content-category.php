@@ -22,8 +22,9 @@
                 $class='';
                 
                 $cat = get_category( get_query_var( 'cat' ) );
-                $jsonarray = (array('type'=>'name','postid'=>$post->ID,'slug'=>$post->post_name,'page'=>intval($index)));
-                $json = htmlspecialchars(json_encode($jsonarray), ENT_QUOTES, 'UTF-8');
+                $jsonarray = (array('type'=>'post','postid'=>$post->ID,'slug'=>$post->post_name,'page'=>intval($index)));
+                // $json = htmlspecialchars(json_encode($jsonarray), ENT_QUOTES, 'UTF-8');
+                $json = jsonToAttribute($jsonarray);
                 $tech = is_array(get_post_meta($post->ID,'gtechs'))?get_post_meta($post->ID,'gtechs')[0]:null;       
                  ?>
         
@@ -50,7 +51,7 @@
                             <h5><?php echo $post->post_excerpt; ?></h5> -->
                         <!--</span> -->
                         <p>&nbsp;</p>
-                        <a href="#" data-toggle="popover" title="Techniques utilisées" data-content="Some content inside the popover">Tech</a>
+                        <!-- <a href="#" data-toggle="popover" title="Techniques utilisées" data-content="Some content inside the popover">Tech</a> -->
                         <div class="card-footer" style="display:inline-block;position:absolute;left:0;bottom:0;width:100%">
                             <small class="text-muted"><?php echo $index ?></small>
                         </div>

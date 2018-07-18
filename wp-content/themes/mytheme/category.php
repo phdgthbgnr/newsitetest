@@ -14,13 +14,13 @@
             <div class="card-group">
             <?php
        
-                while ( have_posts() ) : 
-                    the_post();
-                    get_template_part( 'content-category', get_post_format() ); 
+                // while ( have_posts() ) : 
+                //     the_post();
+                //     get_template_part( 'content-category', get_post_format() ); 
 
-					endwhile; // end of the loop. 
-					//wp_reset_query();
-				?>
+				// endwhile;  
+	
+			?>
             <!-- </ul> -->
             </div>
             <!-- </div> -->

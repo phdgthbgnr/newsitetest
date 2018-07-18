@@ -22,10 +22,10 @@ add_filter('wp_mail_from_name', 'new_mail_from_name');
 
 
 // add customm CSS admin
-function my_custom_fonts() {
+function my_custom_css() {
     echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/admin_style.css" type="text/css" media="all" />';
 }
-add_action('admin_head', 'my_custom_fonts');
+add_action('admin_head', 'my_custom_css');
 
 
 
@@ -289,5 +289,9 @@ if(is_admin()) include('inc/CF_options-supp.php');
 
 // ADD AJAX LOADING
 include('inc/loading_by_ajax.php');
+
+
+// fonctions utiles
+include ('inc/utils.php');
 
 ?>
