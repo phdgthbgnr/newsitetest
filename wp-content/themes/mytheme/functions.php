@@ -231,6 +231,12 @@ if(!is_admin()){
     wp_register_script('bootstrapjs',get_template_directory_uri().'/bootstrap412/js/bootstrap.min.js', '',false, true);
     wp_enqueue_script('bootstrapjs');
 
+    wp_register_script('signals',get_template_directory_uri().'/js/signals.js', '',false, true);
+    wp_enqueue_script('signals');
+
+    wp_register_script('crossroads',get_template_directory_uri().'/js/crossroads.js', '',false, true);
+    wp_enqueue_script('crossroads');
+
     wp_register_style('styles',get_template_directory_uri().'/style.css','',false,'screen');
     wp_enqueue_style( 'styles' );
                     
