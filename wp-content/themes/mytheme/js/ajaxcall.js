@@ -10,7 +10,8 @@
         }
         $(document).ready(function(){
 
-            $(document).on('click','.ajaxcategory',function(evt){
+            // chargement SINGLE POST ---------------------------------------------------------------------------
+            $(document).on('click','.ajaxpost',function(evt){
                 evt.preventDefault();
                 var url = evt.currentTarget.getAttribute('href');
                 var to = evt.currentTarget.getAttribute('data-type');
@@ -44,7 +45,44 @@
                 });
                 return false;
             });
+            // -------------------------------------------------------------------------------------------
 
+            // chargement POSTS / CATEGORIES ---------------------------------------------------------------------
+            $(document).on('click','.ajaxcategory', function(evt){
+                evt.preventDefault();
+                evt.preventDefault();
+                var url = evt.currentTarget.getAttribute('href');
+                var to = evt.currentTarget.getAttribute('data-type');
+        
+                try{
+                    var o = JSON.parse(to);
+                    // if(o === undefined) throw "json not well formed"
+                }catch(e){
+                    console.log(e);
+                    return false;
+                }
+                // page = find_page_number( $(this.parent).clone() );
+
+                $.ajax({
+                    url: with_ajax.url,
+                    type: 'POST',
+                    data:{
+                        action: 'loadcontent-category',
+                        fullurl: url,
+                        queryvars: with_ajax.queryvars,
+                        type: o.type,
+                        slug: o.slug,
+                        page: o.page
+                    },
+                    success:function(res){
+                        console.log('res',res);
+                    },
+                    error:function(err){
+                        console.log('error',err);
+                    }
+                });
+                return false;
+            })
         });
 
         $('[data-toggle="popover"]').popover(); 

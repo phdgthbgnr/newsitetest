@@ -31,7 +31,7 @@
                 <!-- <h4 class="categorie <?php echo $nohover?>"><?php echo $categ ?></h4>
                 <h4 class="imagecat">    -->
                     <!-- thumbnail medium medium-large large full -->
-                    <a href="<?php echo get_page_link($post->ID); ?>" class="ajaxcategory hovereffect" data-type="<?php echo $json ?>">
+                    <a href="<?php echo get_page_link($post->ID); ?>" class="ajaxpost hovereffect" data-type="<?php echo $json ?>">
                         <?php the_post_thumbnail('medium', array('class' => 'card-img-top','style' => 'border-bottom:1px solid #ccc;width:100%;height:auto;display:block')); ?>
                         <div class="overlay">
                             <h2><?php the_title() ?></h2>
