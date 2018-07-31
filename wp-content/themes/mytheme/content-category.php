@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="card border-0 mr-2 my-1">
                 <?php
-                
+                global $wp_query;
                 $index = $wp_query->current_post + 1;
                 $index = $index<10?'0'.$index:$index;
                 //$cat = wp_get_post_categories( $post->ID );
@@ -32,7 +32,8 @@
                 <!-- <h4 class="categorie <?php echo $nohover?>"><?php echo $categ ?></h4>
                 <h4 class="imagecat">    -->
                     <!-- thumbnail medium medium-large large full -->
-                    <a href="<?php echo get_page_link($post->ID); ?>" class="ajaxpost hovereffect" data-type="<?php echo $json ?>">
+                    <!-- get_page_link -->
+                    <a href="<?php echo putHashTagInURL(get_permalink($post->ID,false)); ?>" class="ajaxpost hovereffect" data-type="<?php echo $json ?>">
                         <?php the_post_thumbnail('medium', array('class' => 'card-img-top','style' => 'border-bottom:1px solid #ccc;width:100%;height:auto;display:block')); ?>
                         <div class="overlay">
                             <h2><?php the_title() ?></h2>
@@ -53,7 +54,7 @@
                         <p>&nbsp;</p>
                         <!-- <a href="#" data-toggle="popover" title="Techniques utilisées" data-content="Some content inside the popover">Tech</a> -->
                         <div class="card-footer" style="display:inline-block;position:absolute;left:0;bottom:0;width:100%">
-                            <small class="text-muted"><?php echo $index ?></small>
+                            <small class="text-muted"><?php echo $index; ?></small>
                         </div>
                     </div>
                 <!-- </a> -->

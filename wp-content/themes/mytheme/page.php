@@ -15,7 +15,7 @@
 
 
 get_header(); ?>
-page
+page.php
         <!--<h1 class="titre" style="margin-bottom:20px"><?php  wp_title(''); ?></h1>-->
 			<div id="content" role="main">
                

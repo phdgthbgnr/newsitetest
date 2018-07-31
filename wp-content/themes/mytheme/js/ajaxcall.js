@@ -12,7 +12,7 @@
         $(document).ready(function(){
 
             // chargement SINGLE POST ---------------------------------------------------------------------------
-            $(document).on('click','.ajaxpost',function(evt){
+            $(document).on('click','.ajaxpost_',function(evt){
                 evt.preventDefault();
                 var url = evt.currentTarget.getAttribute('href');
                 var to = evt.currentTarget.getAttribute('data-type');
@@ -50,7 +50,7 @@
             // -------------------------------------------------------------------------------------------
 
             // chargement POSTS / CATEGORIES ---------------------------------------------------------------------
-            $(document).on('click','.ajaxcategory', function(evt){
+            $(document).on('click','.ajaxcategory_', function(evt){
                 console.log('category');
                 evt.preventDefault();
                 var url = evt.currentTarget.getAttribute('href');

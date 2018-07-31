@@ -3,3 +3,5 @@ https://github.com/millermedeiros/js-signals/wiki/Examples
 
 
 http://millermedeiros.github.io/crossroads.js/
+https://www.youtube.com/watch?v=UZboWUdLlu8
+https://www.codesandnotes.be/2014/09/07/low-footprint-client-side-routing-using-crossroads-js/

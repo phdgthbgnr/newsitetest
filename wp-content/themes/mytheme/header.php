@@ -72,16 +72,25 @@ $vers=$_SERVER['HTTP_USER_AGENT'];
         <!-- nav -->
         <div class="row" style="padding:1% 0">
         
-        <nav id="navbar" class="nav nav-pills nav-fill flex-column flex-sm-row"> <!-- <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light"> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">  -->
+        <!-- <nav id="navbar" class="nav navbar-dark bg-dark nav-pills nav-fill flex-column flex-sm-row"> -->
+         <!-- <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light"> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">  -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
                 <?php foreach ( $categories as $category ) { ?>
-                        <?php 
-                            $jsonarray = (array('type'=>'category_name','catid'=>$category->term_id,'slug'=>$category->slug,'parent'=>$category->parent,'name'=>$category->name,'id_contener'=> '#content'));
-                            $json = jsonToAttribute($jsonarray);
-                        ?>
-                        <a href="<?php echo get_category_link( $category->term_id ) ?>" class="nav-item nav-link ajaxcategory <?php  echo $category->term_id==$curcat?'active"':''; echo $category->count==0?'disabled"':''?>" data-type="<?php echo $json ?>">
-                            <?php echo $category->name ?>
-                        </a>
+                    <?php 
+                        $jsonarray = (array('type'=>'category_name','catid'=>$category->term_id,'slug'=>$category->slug,'parent'=>$category->parent,'name'=>$category->name,'id_contener'=> '#content'));
+                        $json = jsonToAttribute($jsonarray);
+                    ?>
+                    <!-- <a href="<?php echo putHashTagInURL(get_category_link( $category->term_id )) ?>" class="nav-item nav-link ajaxcategory <?php  echo $category->term_id==$curcat?'active"':''; echo $category->count==0?'disabled"':''?>" data-type="<?php echo $json ?>">
+                        <?php echo $category->name ?>
+                    </a> -->
+                    <button class="btn btn-sm btn-outline-secondary realisationsnav" type="button" data-link="<?php echo putHashTagInURL(get_category_link( $category->term_id )) ?>"><?php echo $category->name ?></button>
                 <?php } ?>
+                </div>
             </nav>
         <!-- </nav> -->
         </div>
