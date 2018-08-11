@@ -28,6 +28,12 @@ function my_custom_css() {
 add_action('admin_head', 'my_custom_css');
 
 
+// remove static homepage
+// add_action('customize_register', 'themename_customize_register');
+// function themename_customize_register($wp_customize) {
+//     $wp_customize->remove_section( 'static_front_page' );
+// }
+
 
 // add featured images -----------------------------------------------------------------------------------------------------
 add_theme_support( 'post-thumbnails' );

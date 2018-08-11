@@ -63,10 +63,11 @@ function fload_contentposts(){
     // echo json_encode($queryvars);
     $type = wp_strip_all_tags($_POST['type']);
     $slug = wp_strip_all_tags($_POST['slug']);
-    echo($slug);
+    // echo($slug);
     // $queryvars['paged'] = $_POST['page'];
     // $posts = new WP_Query( $queryvars );
     //$queryvars = new WP_Query(o.type)
+    global $posts;
     $posts = new WP_Query( array($type => $slug) );
     // print_r($posts);
     // $GLOBALS['wp_query'] = $posts;
@@ -78,7 +79,7 @@ function fload_contentposts(){
         echo 'nothing';
         // get_template_part( 'content', 'none' );
     }else{
-        while ( $posts->have_posts() ) { 
+        while ( $posts->have_posts() ) {
             $posts->the_post();
             // echo get_the_title();
             get_template_part( 'content-category', get_post_format() );
