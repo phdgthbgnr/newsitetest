@@ -6,7 +6,7 @@
     $cur_cat = get_cat_ID( single_cat_title("",false) );
 	query_posts( 'posts_per_page=-1&cat='.$cur_cat);
     $posts = get_posts('posts_per_page=-1&post_type=post&category='.$cur_cat); 
-    $count = count($posts); 
+    // $count = count($posts); 
 	//wp_reset_query();
 ?>
     <!-- <div class="nbcat">x<span><?php echo $count; ?></span></div> -->

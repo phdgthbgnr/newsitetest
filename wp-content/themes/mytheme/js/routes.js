@@ -2,6 +2,7 @@
 (function(){
 
     function loadCategory (url, action, type, slug, elemt){
+        console.log('loadCategory');
         $.ajax({
             url: url,
             type: 'POST',
@@ -20,6 +21,7 @@
     }
 
     function loadPost (url, action, type, slug, post, elemt){
+        console.log('loadPost');
         $.ajax({
             url: url,
             type: 'POST',
@@ -38,14 +40,36 @@
         });
     }
 
+    function loadPage(url, action, type, slug, elemt){
+        console.log('loadPage');
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data:{
+                action: action,
+                type :type,
+                slug: slug
+            },
+            success: function(res){
+                console.log('success ', res);
+                $(elemt).empty().append(res);
+            },
+            error: function (err){
+                console.log('error ',err);
+            }
+        });
+    }
+
     // front page
     crossroads.addRoute('/', function(){
         console.log('root');
+        // load homepage
+        loadPage(router_ajax.url,'loadcontent-page','frontpage','','#content');
     })
     
     // all categories
     crossroads.addRoute('/{root}/', function(root){
-        console.log(root);
+        console.log('{root}',root);
         
     })
     
@@ -72,7 +96,7 @@
         if (hash.length > 0) {
             route = hash.split('#').pop();
         }
-        console.log(route)
+        console.log(' route : ', route);
         crossroads.parse(route);
     });
      

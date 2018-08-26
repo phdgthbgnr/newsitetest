@@ -6,7 +6,7 @@
                 <?php
                 // global $wp_query;
                 $index = $posts->current_post + 1;
-                $index = $index<10?'0'.$index:$index;
+                $index = $index < 10 ? '0'.$index : $index;
                 //$cat = wp_get_post_categories( $post->ID );
                 $root = get_category_by_slug( 'realisations' );
                 $categ='&nbsp;';

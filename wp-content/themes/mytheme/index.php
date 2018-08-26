@@ -1,6 +1,6 @@
 <?php
 get_header(); ?>
-index.php
+<!-- index.php -->
 	<div id="primary" class="content-area">
 		<div id="content" class="site-content" role="main">
 		<?php if ( have_posts() ) : ?>

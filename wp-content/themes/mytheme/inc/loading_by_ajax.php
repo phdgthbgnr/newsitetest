@@ -19,6 +19,7 @@ add_action('wp_enqueue_scripts', 'initialiser_scripts');
 
 
 
+
 // load ONE FULL POST from AJAX ----------------------------------------------------------------
 add_action( 'wp_ajax_loadcontent-post', 'fload_contentpost' );
 add_action( 'wp_ajax_nopriv_loadcontent-post', 'fload_contentpost' );
@@ -95,4 +96,35 @@ function fload_contentposts(){
 }
 // -----------------------------------------------------------------------------------------
 
-?>
+
+
+
+// load specific PAGE ----------------------------------------------------------------------
+add_action( 'wp_ajax_loadcontent-page', 'fload_contentpage' );
+add_action( 'wp_ajax_nopriv_loadcontent-page', 'fload_contentpage');
+
+function fload_contentpage(){
+    $type = wp_strip_all_tags($_POST['type']);
+    $slug = wp_strip_all_tags($_POST['slug']);
+
+    global $post;
+    if($type == 'frontpage'){
+        $id = get_option('page_on_front');
+        $posts = new WP_Query( array('p' => $id, 'post_type' => 'page') );
+    }
+
+    if( ! $posts->have_posts() ) {
+        echo 'nothing';
+        // get_template_part( 'content', 'none' );
+    }else{
+        while ( $posts->have_posts() ) {
+            $posts->the_post();
+            // echo get_the_title();
+            get_template_part( 'content', get_post_format() );
+        }
+    }
+    wp_reset_postdata();
+
+    // global $posts;
+    // $posts = new WP_Query( array($type => $slug) );
+}

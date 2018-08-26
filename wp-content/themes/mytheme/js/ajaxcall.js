@@ -1,7 +1,7 @@
 
 // function DomLoaded(){
-    console.log('ajaxcall');
-    console.log(with_ajax.url);
+    // console.log('ajaxcall');
+    // console.log(with_ajax.url);
     (function($){
 
         // function find_page_number( element ) {
@@ -21,7 +21,7 @@
                     var o = JSON.parse(to);
                     // if(o === undefined) throw "json not well formed"
                 }catch(e){
-                    console.log(e);
+                    console.log('e1', e);
                     return false;
                 }
                 // page = find_page_number( $(this.parent).clone() );
@@ -59,12 +59,12 @@
                     var o = JSON.parse(to);
                     // if(o === undefined) throw "json not well formed"
                 }catch(e){
-                    console.log(e);
+                    console.log('e2', e);
                     return false;
                 }
                 // page = find_page_number( $(this.parent).clone() );
                 
-                console.log(o.slug);
+                console.log('o.slug', o.slug);
                 $.ajax({
                     url: with_ajax.url,
                     type: 'POST',
