@@ -48,6 +48,7 @@ function fload_contentpost(){
         }
         wp_reset_postdata();
     }
+    exit(); // prevent adding zero (0)
 }
 // -----------------------------------------------------------------------------------------
 
@@ -57,7 +58,6 @@ function fload_contentpost(){
 // load ALL POSTS by ONE CATEGORY from AJAX ------------------------------------------------
 add_action( 'wp_ajax_loadcontent-posts', 'fload_contentposts' );
 add_action( 'wp_ajax_nopriv_loadcontent-posts', 'fload_contentposts' );
-
 function fload_contentposts(){
     // $queryvars = json_decode( stripslashes( $_POST['queryvars'] ), true );
     // $queryvars['paged'] = $_POST['page'];
@@ -68,31 +68,30 @@ function fload_contentposts(){
     // $queryvars['paged'] = $_POST['page'];
     // $posts = new WP_Query( $queryvars );
     //$queryvars = new WP_Query(o.type)
-    global $posts;
+    // global $posts;
+    // global $post;
     $posts = new WP_Query( array($type => $slug) );
     // print_r($posts);
     // $GLOBALS['wp_query'] = $posts;
     ?>
     <div class="row">
         <div class="card-group">
-    <?php
-    if( ! $posts->have_posts() ) {
-        echo 'nothing';
-        // get_template_part( 'content', 'none' );
-    }else{
-        while ( $posts->have_posts() ) {
-            $posts->the_post();
-            // echo get_the_title();
-            get_template_part( 'content-category', get_post_format() );
-        }
-        ?>
+            <?php
+                if( !$posts->have_posts() ) {
+                    echo 'nothing';
+                    // get_template_part( 'content', 'none' );
+                }else{
+                    while ( $posts->have_posts() ) {
+                        $posts->the_post();
+                        // echo get_the_title();
+                        get_template_part( 'content-category', get_post_format() );
+                }
+                wp_reset_postdata();
+            } ?>
         </div>
-            </div>
-        <?php
-    }
-    wp_reset_postdata();
-
-    // die();
+    </div>
+    <?php 
+    exit(); // prevent adding zero (0)
 }
 // -----------------------------------------------------------------------------------------
 
@@ -102,18 +101,17 @@ function fload_contentposts(){
 // load specific PAGE ----------------------------------------------------------------------
 add_action( 'wp_ajax_loadcontent-page', 'fload_contentpage' );
 add_action( 'wp_ajax_nopriv_loadcontent-page', 'fload_contentpage');
-
 function fload_contentpage(){
     $type = wp_strip_all_tags($_POST['type']);
     $slug = wp_strip_all_tags($_POST['slug']);
 
-    global $post;
+    // global $post;
     if($type == 'frontpage'){
         $id = get_option('page_on_front');
         $posts = new WP_Query( array('p' => $id, 'post_type' => 'page') );
     }
 
-    if( ! $posts->have_posts() ) {
+    if( !$posts->have_posts() ) {
         echo 'nothing';
         // get_template_part( 'content', 'none' );
     }else{
@@ -122,9 +120,9 @@ function fload_contentpage(){
             // echo get_the_title();
             get_template_part( 'content', get_post_format() );
         }
+        wp_reset_postdata();
     }
-    wp_reset_postdata();
-
+    exit(); // prevent adding zero (0)
     // global $posts;
     // $posts = new WP_Query( array($type => $slug) );
 }

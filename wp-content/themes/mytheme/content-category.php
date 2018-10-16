@@ -1,8 +1,10 @@
-    <?php if ($post) { ?>
+<?php 
+global $post;
+if ($post) { ?>
         <!-- <div class="col-sm-6 col-md-2"> -->
-            <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 d-flex align-items-stretch"> <!--col-xs-6 col-sm-2 -->
-            <div class="row">
-                <div class="card border-0 mr-2 my-1">
+    <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 d-flex align-items-stretch"> <!--col-xs-6 col-sm-2 -->
+        <div class="row">
+            <div class="card border-0 mr-2 my-1">
                 <?php
                 // global $wp_query;
                 $index = $posts->current_post + 1;
@@ -17,16 +19,16 @@
                     $categ=$product_terms[0]->name;
                 }
 
-                $class=$index%3 == 0 ? 'class="nomarginr"' : '';
-                $nohover=$categ=='&nbsp;'?'nohover':'';
-                $class='';
+                $class = $index%3 == 0 ? 'class="nomarginr"' : '';
+                $nohover = $categ=='&nbsp;'?'nohover':'';
+                $class = '';
                 
                 $cat = get_category( get_query_var( 'cat' ) );
                 $jsonarray = (array('type'=>'post','postid'=>$post->ID,'slug'=>$post->post_name,'page'=>intval($index)));
                 // $json = htmlspecialchars(json_encode($jsonarray), ENT_QUOTES, 'UTF-8');
                 $json = jsonToAttribute($jsonarray);
                 $tech = is_array(get_post_meta($post->ID,'gtechs'))?get_post_meta($post->ID,'gtechs')[0]:null;       
-                 ?>
+                ?>
         
                 <!-- <a href="<?php echo get_page_link($post->ID); ?>"<?php echo $class ?> style="display:inline"> -->
                 <!-- <h4 class="categorie <?php echo $nohover?>"><?php echo $categ ?></h4>
@@ -41,8 +43,6 @@
                         </div>
                     </a>
                     <div class="card-body">
-                        <!-- <span><?php echo $index ?></span> -->
-                        <!-- </h4> -->
                         <!-- <span class="stitre">-->
                         <h5 class="card-title text-uppercase"><?php the_title() ?></h5>
                         <button  type="button" class="btn btn-outline-secondary btn-sm ajaxcategory" data-type="<?php echo $json ?>"><?php echo get_post_meta($post->ID,'libpost',true) ?></button>

@@ -93,5 +93,5 @@ $vers=$_SERVER['HTTP_USER_AGENT'];
                 </div>
             </nav>
         <!-- </nav> -->
-        </div>
+    </div>
         <!-- <div id="content" class="container"></div> -->

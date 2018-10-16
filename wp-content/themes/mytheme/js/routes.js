@@ -20,6 +20,7 @@
         });
     }
 
+
     function loadPost(url, action, type, slug, post, elemt) {
         console.log('loadPost');
         $.ajax({
@@ -40,6 +41,7 @@
         });
     }
 
+
     function loadPage(url, action, type, slug, elemt) {
         console.log('loadPage');
         $.ajax({
@@ -48,7 +50,7 @@
             data: {
                 action: action,
                 type: type,
-                slug: slug
+                slug: slug,
             },
             success: function (res) {
                 console.log('success ', res);
@@ -70,13 +72,12 @@
     // all categories
     crossroads.addRoute('/{root}/', function (root) {
         console.log('{root}', root);
-
     })
 
     // by category
     crossroads.addRoute('/{rootCategory}/{category}/', function (rootCategory, category) {
         // console.log(rootCategory);
-        // console.log(category);
+        console.log(category);
         if (rootCategory === 'realisations') loadCategory(router_ajax.url, 'loadcontent-posts', 'category_name', category, '#content');
     });
 

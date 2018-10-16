@@ -16,14 +16,17 @@
 
 get_header(); ?>
         <!--<h1 class="titre" style="margin-bottom:20px"><?php  wp_title(''); ?></h1>-->
-			<div id="content" role="main">
+<div id="content" role="main">
                
-				<?php while ( have_posts() ) : the_post(); ?>
+				<?php 	
+				/*
+					while ( have_posts() ) : the_post(); 
 
-					<?php //get_template_part( 'content', 'page' ); ?>
+						get_template_part( 'content', 'page' );
 
-				<?php endwhile; // end of the loop. ?>
-
-
-    </div><!-- #container -->
+					endwhile; // end of the loop. 
+				*/
+				?>
+<!-- #container -->
+</div>
 <?php get_footer(); ?>
