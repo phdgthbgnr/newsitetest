@@ -307,6 +307,6 @@ include('inc/loading_by_ajax.php');
 
 
 // fonctions utiles
-include ('inc/utils.php');
+include('inc/utils.php');
 
 ?>
