@@ -1,0 +1,29 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+ 
+.wqrecaptcha_form .form_input_dom{
+    width:500px;
+}
+
+.wqrecaptcha_form .form_input_key{
+    width:500px;
+}
+
+.wqrecaptcha_form h3{
+    margin: 1em 0 .4em 0;
+}
+
+.wqrecaptcha_form label{
+    font-weight: bold;
+}
+
+.wqrecaptcha_form select{
+    width:300px;
+}
+
+.beware{
+    color:red;
+    font-weight: bold;
+}
