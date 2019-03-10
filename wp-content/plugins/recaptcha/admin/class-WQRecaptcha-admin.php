@@ -56,7 +56,8 @@ class WQRecaptcha_Admin
      * @access   private
      * @var      string    $version    The current version of this plugin.
      */
-    private $section = 'recaptcha';
+    private $section_recaptcha = 'recaptcha';
+    private $section_domain = 'domains';
 
     public function __construct($plugin_name, $version)
     {
@@ -136,11 +137,37 @@ class WQRecaptcha_Admin
      */
     public function register_plugin_settings()
     {
+        
+        // section domain
         add_settings_section(
-            $this->section,
-            'domains',
+            $this->section_domain,
+            'Domains',
             function () {
-                $this->domains_callback();
+                $this->section_callback_domain();
+            },
+            $this->plugin_name
+        );
+
+        add_settings_field(
+            'domain', 
+            'Domain', 
+            function () {
+                $this->field_callback_domain();
+            }, 
+            $this->plugin_name, 
+            $this->section_domain, 
+            array( 'domain', __('Explanation for domain', 'ani_plugin')) 
+        );
+
+        register_setting($this->plugin_name, 'domain');
+
+        
+        // section site key / secret key
+        add_settings_section(
+            $this->section_recaptcha,
+            'Site key / Secret key',
+            function () {
+                $this->section_callback_keys();
             },
             $this->plugin_name
         );
@@ -152,11 +179,9 @@ class WQRecaptcha_Admin
                 $this->field_callback_sitekey();
             }, 
             $this->plugin_name, 
-            $this->section, 
+            $this->section_recaptcha, 
             array( 'sitekey', __('Explanation for site key', 'ani_plugin')) 
         );
-
-        register_setting($this->plugin_name, 'sitekey');
 
         add_settings_field(
             'secretkey', 
@@ -165,27 +190,44 @@ class WQRecaptcha_Admin
                 $this->field_callback_secretkey();
             }, 
             $this->plugin_name, 
-            $this->section, 
-            array( 'secretkey', __('Explanation for site key', 'ani_plugin')) 
+            $this->section_recaptcha, 
+            array( 'secretkey', __('Explanation for secret key', 'ani_plugin')) 
         );
 
         register_setting($this->plugin_name, 'sitekey');
         register_setting($this->plugin_name, 'secretkey');
 
-        // register_setting(
-        //     $this->plugin_name . '_group', // Option group
-        //     $this->plugin_name . '_sitekey' // Option name
-        // );
-
-        // register_setting(
-        //     $this->plugin_name . '_group', // Option group
-        //     $this->plugin_name . '_secretkey' // Option name
-        // );
-
     }
 
-    private function domains_callback(){
-       echo 'section';
+    private function section_callback_domain(){
+        echo 'section dmain';
+    }
+
+    private function field_callback_domain(){
+        ?>
+        <p>Current domain :
+        <span class="beware">
+        <?php
+            $urlparts = parse_url(home_url());
+            echo $urlparts['host'];
+        ?>
+        </span>
+    </p>
+    <p>
+        <label for="target_domain">Domain associated with keys below :</label>
+        <select name="target_domain" id="target_domain" class="">
+            <option value="domaine 1">domaine 1</option>
+            <option value="domaine 2">domaine 2</option>
+            <option value="domaine 3">domaine 3</option>
+        </select>
+    </p>
+    <button>Add a domain : </button>
+    <input name="<?php echo $this->plugin_name; ?>_domain" id="domain" placeholder="add a domain" class="form_input_key" value="<?php echo esc_attr( get_option( $this->plugin_name.'_domain') ); ?>"/>
+    <?php
+    }
+
+    private function section_callback_keys(){
+        echo 'section keys';
     }
 
     private function field_callback_sitekey(){
