@@ -56,14 +56,16 @@ class WQRecaptcha_Admin
      * @access   private
      * @var      string    $version    The current version of this plugin.
      */
-    private $section_recaptcha = 'recaptcha';
-    private $section_domain = 'domains';
+    private $section;
+
+    private $current_domain;
 
     public function __construct($plugin_name, $version)
     {
 
         $this->plugin_name = $plugin_name;
         $this->version = $version;
+        $this->section = $plugin_name . '_settings';
 
     }
 
@@ -114,6 +116,40 @@ class WQRecaptcha_Admin
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/wqrecaptcha-admin.js', array('jquery'), $this->version, false);
 
     }
+    /**
+     * pre update options
+     *
+     * @since    1.0.0
+     */    
+    public function update_options_settings($new_value, $old_value, $option_name)
+    {
+        //
+        $raw_options = get_option('wqrecaptcha');
+        if(!empty($raw_options)){
+            try {
+                $json_options = json_decode($raw_options);
+            }catch(Exception $e){
+                die( 'erreur JSON');
+            }
+        }
+
+        if(!isset($json_options->domains)){
+            $json_options['domains'] = array();
+        
+        }elseif ($option_name == 'newdomain'){
+            if(!isset($json_options->domains->{$new_value})){
+                $json_options->domains[$new_value] = array('sitekey' => 0, 'secretkey' => 0 );
+            }
+        }else{
+
+        }
+
+        update_option('wqrecaptcha', json_encode($json_options));
+        
+        // 
+
+        
+    }
 
     /**
      * register admin menu
@@ -137,108 +173,107 @@ class WQRecaptcha_Admin
      */
     public function register_plugin_settings()
     {
+        // add_settings_section($this->section, 'Add a pair site / secret key', function () {$this->section_callback();}, $this->plugin_name);
+        add_settings_section($this->section, 'Add a pair site / secret key', array($this, 'section_callback'), $this->plugin_name);
+
+        $fields = array(
+            array(
+                'uid' => 'domains',
+                'label' => 'Domaines',
+                'section' => $this->section,
+                'type' => 'select',
+                'options' => array(''),
+                'placeholder' => 'Domaines enregistres',
+                'helper' => 'Does this help?',
+                'supplemental' => 'bla bla',
+                'default' => 'maybe',
+            ),
+            array(
+                'uid' => 'newdomain',
+                'label' => 'Nouveau domaine',
+                'section' => $this->section,
+                'type' => 'text',
+                'options' => false,
+                'placeholder' => 'ajouter un domaine',
+                'helper' => 'Does this help?',
+                'supplemental' => 'New domain for google recaptcha v3',
+                'default' => '0',
+            ),
+            array(
+                'uid' => 'sitekey',
+                'label' => 'Site Key',
+                'section' => $this->section,
+                'type' => 'text',
+                'options' => false,
+                'placeholder' => 'site key',
+                'helper' => 'Does this help?',
+                'supplemental' => 'site key google recaptcha v3',
+                'default' => '0',
+            ),
+            array(
+                'uid' => 'secretkey',
+                'label' => 'Secret Key',
+                'section' => $this->section,
+                'type' => 'text',
+                'options' => false,
+                'placeholder' => 'secret key',
+                'helper' => 'Does this help?',
+                'supplemental' => 'secret key google recaptcha v3',
+                'default' => '0',
+            ),
+
+        );
+
+        $args = array(
+            'type' => 'string', 
+            'sanitize_callback' => 'sanitize_text_field',
+            'default' => NULL,
+            );
+
+        foreach ($fields as $field) {
+            add_settings_field($field['uid'], $field['label'], array($this, 'field_callback'), $this->plugin_name, $field['section'], $field);
+            // enregistre les champs en base -> pas ce qu'on veut
+            register_setting( $this->plugin_name, $field['uid'], $args );
+        }
+
+        // enregistrer un champs avec des objets sérialisés
+        // register_setting($this->plugin_name, 'wqrecaptcha');
         
-        // section domain
-        add_settings_section(
-            $this->section_domain,
-            'Domains',
-            function () {
-                $this->section_callback_domain();
-            },
-            $this->plugin_name
-        );
-
-        add_settings_field(
-            'domain', 
-            'Domain', 
-            function () {
-                $this->field_callback_domain();
-            }, 
-            $this->plugin_name, 
-            $this->section_domain, 
-            array( 'domain', __('Explanation for domain', 'ani_plugin')) 
-        );
-
-        register_setting($this->plugin_name, 'domain');
-
         
-        // section site key / secret key
-        add_settings_section(
-            $this->section_recaptcha,
-            'Site key / Secret key',
-            function () {
-                $this->section_callback_keys();
-            },
-            $this->plugin_name
-        );
-
-        add_settings_field(
-            'sitekey', 
-            'Site Key', 
-            function () {
-                $this->field_callback_sitekey();
-            }, 
-            $this->plugin_name, 
-            $this->section_recaptcha, 
-            array( 'sitekey', __('Explanation for site key', 'ani_plugin')) 
-        );
-
-        add_settings_field(
-            'secretkey', 
-            'Secret Key', 
-            function () {
-                $this->field_callback_secretkey();
-            }, 
-            $this->plugin_name, 
-            $this->section_recaptcha, 
-            array( 'secretkey', __('Explanation for secret key', 'ani_plugin')) 
-        );
-
-        register_setting($this->plugin_name, 'sitekey');
-        register_setting($this->plugin_name, 'secretkey');
 
     }
 
-    private function section_callback_domain(){
-        echo 'section dmain';
+    // public function sanitize_text_field(){
+    //     die('sanitize_text_field');
+    // }
+
+    public function section_callback()
+    {
+        $urlparts = parse_url(home_url());
+        echo '<a href="https://www.google.com/recaptcha/admin#list" target="_blank">Google recaptcha v3</a>';
+        echo '<p>Current domain : <span class="beware">' . $urlparts['host'] . '</span></p>';
     }
 
-    private function field_callback_domain(){
-        ?>
-        <p>Current domain :
-        <span class="beware">
-        <?php
-            $urlparts = parse_url(home_url());
-            echo $urlparts['host'];
-        ?>
-        </span>
-    </p>
-    <p>
-        <label for="target_domain">Domain associated with keys below :</label>
-        <select name="target_domain" id="target_domain" class="">
-            <option value="domaine 1">domaine 1</option>
-            <option value="domaine 2">domaine 2</option>
-            <option value="domaine 3">domaine 3</option>
-        </select>
-    </p>
-    <button>Add a domain : </button>
-    <input name="<?php echo $this->plugin_name; ?>_domain" id="domain" placeholder="add a domain" class="form_input_key" value="<?php echo esc_attr( get_option( $this->plugin_name.'_domain') ); ?>"/>
-    <?php
-    }
+    public function field_callback($arguments)
+    {
+        $value = get_option($arguments['uid']);
 
-    private function section_callback_keys(){
-        echo 'section keys';
-    }
-
-    private function field_callback_sitekey(){
-        ?>
-        <input name="<?php echo $this->plugin_name; ?>_sitekey" id="sitekey" placeholder="site key" class="form_input_key" value="<?php echo esc_attr( get_option( $this->plugin_name.'_sitekey') ); ?>"/>
-        <?php
-    }
-    private function field_callback_secretkey(){
-        ?>
-        <input name="<?php echo $this->plugin_name; ?>_secretkey" id="secretkey" placeholder="secret key" class="form_input_key" value="<?php echo esc_attr( get_option( $this->plugin_name.'_secretkey') ); ?>"/>
-        <?php
+        switch($arguments['type']){
+            
+            case 'text':
+            printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
+            break;
+            
+            case 'select':
+            if( ! empty ( $arguments['options'] ) && is_array( $arguments['options'] ) ){
+                $options_markup = '';
+                foreach( $arguments['options'] as $key => $label ){
+                    $options_markup .= sprintf( '<option value="%s" %s>%s</option>', $key, selected( $value, $key, false ), $label );
+                }
+                printf( '<select name="%1$s" id="%1$s">%2$s</select>', $arguments['uid'], $options_markup );
+            }
+            break;
+        }
     }
 
     /**
