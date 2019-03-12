@@ -58,8 +58,6 @@ class WQRecaptcha_Admin
      */
     private $section;
 
-    private $current_domain;
-
     public function __construct($plugin_name, $version)
     {
 
@@ -120,47 +118,51 @@ class WQRecaptcha_Admin
      * pre update options
      *
      * @since    1.0.0
-     */    
+     *
+     * TODO : A passer en objet à sérialiser
+     *
+     */
     public function update_options_settings($new_value, $old_value, $option_name)
     {
         //
         $raw_options = get_option('wqrecaptcha');
-        if(!empty($raw_options)){
+        if (!empty($raw_options)) {
             try {
                 $arr_options = unserialize($raw_options);
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 die('erreur');
                 $arr_options = array('currentdomain' => '', 'domains' => array());
             }
-        }else{
+        } else {
             $arr_options = array('currentdomain' => '', 'domains' => array());
         }
 
-         print_r($arr_options);
-        die();
-
-        if ($option_name == 'newdomain'){
+        if ($option_name == 'newdomain' && !empty($new_value)) {
             $arr_options['currentdomain'] = $new_value;
-            array_push($arr_options['domains'], array($new_value => array('sitekey'=>'','secretkey'=>'')));
+            if (!key_exists($new_value, $arr_options['domains'])) {
+                $arr_options['domains'][$new_value] = array('sitekey' => '', 'secretkey' => '');
+            }
         }
 
-        
-        
-        // if($option_name == 'sitekey' && !empty($json_options->currentdomain)){
-        //     $curdom = $json_options->currentdomain;
-        //     $json_options->domains[$curdom]['sitekey'] = $new_value
-        // }
+        if ($option_name == 'currentdomain' && !empty($new_value)) {
+            $arr_options['currentdomain'] = $new_value;
+            // if (!key_exists($new_value, $arr_options['domains'])) {
+            //     $arr_options['domains'][$new_value] = array('sitekey' => '', 'secretkey' => '');
+            // }
+        }
 
-        // if($option_name == 'secretkey' && !empty($json_options->currentdomain)){
-        //     $curdom = $json_options->currentdomain;
-        //     $json_options->domains->{$curdom}->secretkey = $new_value;
-        // }
-        
+        if ($option_name == 'sitekey' && !empty($arr_options['currentdomain'])) {
+            $curdom = $arr_options['currentdomain'];
+            $arr_options['domains'][$curdom]['sitekey'] = $new_value;
+        }
+
+        if ($option_name == 'secretkey' && !empty($arr_options['currentdomain'])) {
+            $curdom = $arr_options['currentdomain'];
+            $arr_options['domains'][$curdom]['secretkey'] = $new_value;
+        }
+
         update_option('wqrecaptcha', serialize($arr_options));
-        
-        // 
 
-        
     }
 
     /**
@@ -174,9 +176,10 @@ class WQRecaptcha_Admin
             __('WQ recaptcha', 'webqam'),
             'manage_options',
             $this->plugin_name,
-            function () {
-                $this->options_page_html();
-            }
+            array($this, 'options_page_html')
+            // function () {
+            //     $this->options_page_html();
+            // }
         );
     }
 
@@ -185,20 +188,29 @@ class WQRecaptcha_Admin
      */
     public function register_plugin_settings()
     {
-        // add_settings_section($this->section, 'Add a pair site / secret key', function () {$this->section_callback();}, $this->plugin_name);
-        add_settings_section($this->section, 'Add a pair site / secret key', array($this, 'section_callback'), $this->plugin_name);
-
+        // default settings
         $fields = array(
             array(
+                'uid' => 'currentdomain',
+                'label' => '',
+                'section' => $this->section,
+                'type' => 'hidden',
+                'options' => false,
+                'placeholder' => '',
+                'helper' => 'Does this help?',
+                'supplemental' => 'secret key google recaptcha v3',
+                'default' => '',
+            ),
+            array(
                 'uid' => 'domains',
-                'label' => 'Domaines',
+                'label' => 'Sélectionner un domaine',
                 'section' => $this->section,
                 'type' => 'select',
                 'options' => array(''),
                 'placeholder' => 'Domaines enregistres',
                 'helper' => 'Does this help?',
                 'supplemental' => 'bla bla',
-                'default' => 'maybe',
+                'default' => '',
             ),
             array(
                 'uid' => 'newdomain',
@@ -209,7 +221,7 @@ class WQRecaptcha_Admin
                 'placeholder' => 'ajouter un domaine',
                 'helper' => 'Does this help?',
                 'supplemental' => 'New domain for google recaptcha v3',
-                'default' => '0',
+                'default' => '',
             ),
             array(
                 'uid' => 'sitekey',
@@ -220,7 +232,7 @@ class WQRecaptcha_Admin
                 'placeholder' => 'site key',
                 'helper' => 'Does this help?',
                 'supplemental' => 'site key google recaptcha v3',
-                'default' => '0',
+                'default' => '',
             ),
             array(
                 'uid' => 'secretkey',
@@ -231,33 +243,30 @@ class WQRecaptcha_Admin
                 'placeholder' => 'secret key',
                 'helper' => 'Does this help?',
                 'supplemental' => 'secret key google recaptcha v3',
-                'default' => '0',
+                'default' => '',
             ),
 
         );
+        // add_settings_section($this->section, 'Add a pair site / secret key', function () {$this->section_callback();}, $this->plugin_name);
+        add_settings_section($this->section, 'Add a pair site / secret key', array($this, 'section_callback'), $this->plugin_name);
 
         $args = array(
-            'type' => 'string', 
+            'type' => 'string',
             'sanitize_callback' => 'sanitize_text_field',
-            'default' => NULL,
-            );
-
+            'validate_callback' => 'validate',
+            'default' => null,
+        );
         foreach ($fields as $field) {
             add_settings_field($field['uid'], $field['label'], array($this, 'field_callback'), $this->plugin_name, $field['section'], $field);
-            // enregistre les champs en base -> pas ce qu'on veut
-            register_setting( $this->plugin_name, $field['uid'], $args );
+            /*
+             * les champs ne sont pas directement enregistrés en base
+             * interception avec update_options_settings
+             * -> class-WQRecaptcha > define_admin_hook
+             */
+            register_setting($this->plugin_name, $field['uid'], $args);
         }
 
-        // enregistrer un champs avec des objets sérialisés
-        // register_setting($this->plugin_name, 'wqrecaptcha');
-        
-        
-
     }
-
-    // public function sanitize_text_field(){
-    //     die('sanitize_text_field');
-    // }
 
     public function section_callback()
     {
@@ -268,30 +277,56 @@ class WQRecaptcha_Admin
 
     public function field_callback($arguments)
     {
-        $value = get_option($arguments['uid']);
+        // default values
+        $value = '';
 
-        switch($arguments['type']){
-            
+        // saved values
+        $raw_options = get_option('wqrecaptcha');
+        $arr_options = unserialize($raw_options);
+
+        switch ($arguments['type']) {
+
             case 'text':
-            printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
-            break;
-            
-            case 'select':
-            if( ! empty ( $arguments['options'] ) && is_array( $arguments['options'] ) ){
-                $options_markup = '';
-                foreach( $arguments['options'] as $key => $label ){
-                    $options_markup .= sprintf( '<option value="%s" %s>%s</option>', $key, selected( $value, $key, false ), $label );
+                if ($arguments['uid'] == 'sitekey' || $arguments['uid'] == 'secretkey') {
+                    if (!empty($raw_options)) {
+                        if (isset($arr_options['currentdomain']) && isset($arr_options['domains'])) {
+                            $currentdom = $arr_options['currentdomain'];
+                            $value = $arr_options['domains'][$currentdom][$arguments['uid']];
+                        }
+                    }
                 }
-                printf( '<select name="%1$s" id="%1$s">%2$s</select>', $arguments['uid'], $options_markup );
-            }
-            break;
+                printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
+                break;
+
+            case 'select':
+                $options_markup = '';
+                if (!empty($raw_options)) {
+                    if (isset($arr_options['currentdomain']) && isset($arr_options['domains'])) {
+                        $value = $arr_options['currentdomain'];
+                        foreach ($arr_options['domains'] as $key => $val) {
+                            $options_markup .= sprintf('<option value="%s" %s data-site="%s" data-secret="%s">%s</option>', $key, selected($value, $key, false), $val['sitekey'], $val['secretkey'], $key);
+                        }
+                    }
+                }
+                printf('<select name="%1$s" id="%1$s" class="form_input_key">%2$s</select>', $arguments['uid'], $options_markup);
+                break;
+
+            case 'hidden':
+                if (!empty($raw_options)) {
+                    if (isset($arr_options['currentdomain']) && isset($arr_options['domains'])) {
+                        $value = $arr_options['currentdomain'];
+                        printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
+                    }
+                }
+
+                break;
         }
     }
 
     /**
      * add admin page
      */
-    private function options_page_html()
+    public function options_page_html()
     {
         // check user capabilities
         if (!current_user_can('manage_options')) {

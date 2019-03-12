@@ -1,4 +1,4 @@
-(function( $ ) {
+(function($) {
 	'use strict';
 
 	/**
@@ -29,4 +29,23 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-})( jQuery );
+	$(document).ready(function() {
+		$('#domains').change(function(e) {
+			// change value sitekey / secretkey
+			var selected = $(this).find('option:selected');
+			$('#sitekey').val(selected.data('site'));
+			$('#secretkey').val(selected.data('secret'));
+			// change value current domain
+			$('#currentdomain').val(selected.val());
+		});
+		
+		$('#newdomain').on('input',function(e) {
+			var selected = $('#domains').find('option:selected');
+			if($('#newdomain').val() == '') {
+				$('#currentdomain').val(selected.val());
+			}else{
+				$('#currentdomain').val($('#newdomain').val());
+			}
+		});
+	});
+})(jQuery);

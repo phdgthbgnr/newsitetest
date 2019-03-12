@@ -145,10 +145,17 @@ class WQRecaptcha
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 
         // interception update settings
-        $this->loader->add_action( 'pre_update_option_domains',  $plugin_admin, 'update_options_settings', 8, 3);
-        $this->loader->add_action( 'pre_update_option_newdomain',  $plugin_admin, 'update_options_settings', 9, 3);
-        $this->loader->add_action( 'pre_update_option_sitekey',  $plugin_admin, 'update_options_settings', 10, 3);
-        $this->loader->add_action( 'pre_update_option_secretkey',  $plugin_admin, 'update_options_settings', 11, 3);
+        $this->loader->add_filter('pre_update_option_currentdomain', $plugin_admin, 'update_options_settings', 9, 3);
+        $this->loader->add_filter('pre_update_option_domains', $plugin_admin, 'update_options_settings', 9, 3);
+        $this->loader->add_filter('pre_update_option_newdomain', $plugin_admin, 'update_options_settings', 9, 3);
+        $this->loader->add_filter('pre_update_option_sitekey', $plugin_admin, 'update_options_settings', 10, 3);
+        $this->loader->add_filter('pre_update_option_secretkey', $plugin_admin, 'update_options_settings', 10, 3);
+
+        //  interception loading settings
+        // $this->loader->add_filter('pre_option_domains',  $plugin_admin, 'load_options_settings', 8, 3);
+        // $this->loader->add_filter('pre_option_newdomain',  $plugin_admin, 'load_options_settings', 9, 3);
+        // $this->loader->add_filter('pre_option_sitekey',  $plugin_admin, 'load_options_settings', 10, 3);
+        // $this->loader->add_filter('pre_option_secretkey',  $plugin_admin, 'load_options_settings', 11, 3);
 
     }
     /**
