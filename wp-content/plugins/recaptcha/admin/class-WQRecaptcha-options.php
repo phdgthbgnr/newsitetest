@@ -4,24 +4,6 @@ class WQRecaptcha_Options
 {
 
     /**
-     * The ID of this plugin.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      string    $plugin_name    The ID of this plugin.
-     */
-    private $plugin_name;
-
-    /**
-     * The version of this plugin.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      string    $version    The current version of this plugin.
-     */
-    private $version;
-
-    /**
      * The root name of array domains.
      *
      * @since    1.0.0
@@ -33,7 +15,9 @@ class WQRecaptcha_Options
 
     private $options = array();
 
-    public function __construct($plugin_name, $version, $root)
+    private $currentDomain = '';
+
+    public function __construct()
     {
         $this->plugin_name = $plugin_name;
         $this->version = $version;
@@ -42,7 +26,8 @@ class WQRecaptcha_Options
 
     public function add_domain($dom)
     {
-        if (empty($this->domains)) {
+        $this->currentDomain = $dom;
+        if (empty($this->options)) {
             array_push($this->options, array($this->root => array('currentdomain' => $dom, $dom => array('sitekey' => '', 'secretkey' => ''))));
         } else {
             if (!key_exists($dom, $this->options[$this->root])) {
@@ -52,15 +37,31 @@ class WQRecaptcha_Options
         }
     }
 
-    public function add_sitekey($dom, $key, $val)
+    public function add_sitekey($key, $val)
     {
         if (key_exists($dom, $this->options[$this->root])) {
-            $this->options[$this->root][$dom][$key] = $val;
+            $this->options[$this->root][$this->currentDomain][$key] = $val;
         }
 
     }
 
-    public function set_current_dom($dom){
+    public function set_sitekey($typekey, $val)
+    {
+        if (key_exists($this->currentDomain, $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->currentDomain])) {
+            $this->options[$this->root][$this->currentDomain][$typekey] = $val;
+        }
+    }
+
+    public function get_sitekey($typekey)
+    {
+        if (key_exists($this->currentDomain, $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->currentDomain])) {
+            return $this->options[$this->root][$this->currentDomain][$typekey];
+        }
+    }
+
+    public function set_current_dom($dom)
+    {
+        $this->currentDomain = $dom;
         $this->options[$this->root]['currentdomain'] = $dom;
     }
 

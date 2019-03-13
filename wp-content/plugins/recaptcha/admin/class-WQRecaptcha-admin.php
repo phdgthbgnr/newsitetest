@@ -114,56 +114,6 @@ class WQRecaptcha_Admin
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/wqrecaptcha-admin.js', array('jquery'), $this->version, false);
 
     }
-    /**
-     * pre update options
-     *
-     * @since    1.0.0
-     *
-     * TODO : A passer en objet à sérialiser
-     *
-     */
-    public function update_options_settings($new_value, $old_value, $option_name)
-    {
-        //
-        $raw_options = get_option('wqrecaptcha');
-        if (!empty($raw_options)) {
-            try {
-                $arr_options = unserialize($raw_options);
-            } catch (Exception $e) {
-                die('erreur');
-                $arr_options = array('currentdomain' => '', 'domains' => array());
-            }
-        } else {
-            $arr_options = array('currentdomain' => '', 'domains' => array());
-        }
-
-        if ($option_name == 'newdomain' && !empty($new_value)) {
-            $arr_options['currentdomain'] = $new_value;
-            if (!key_exists($new_value, $arr_options['domains'])) {
-                $arr_options['domains'][$new_value] = array('sitekey' => '', 'secretkey' => '');
-            }
-        }
-
-        if ($option_name == 'currentdomain' && !empty($new_value)) {
-            $arr_options['currentdomain'] = $new_value;
-            // if (!key_exists($new_value, $arr_options['domains'])) {
-            //     $arr_options['domains'][$new_value] = array('sitekey' => '', 'secretkey' => '');
-            // }
-        }
-
-        if ($option_name == 'sitekey' && !empty($arr_options['currentdomain'])) {
-            $curdom = $arr_options['currentdomain'];
-            $arr_options['domains'][$curdom]['sitekey'] = $new_value;
-        }
-
-        if ($option_name == 'secretkey' && !empty($arr_options['currentdomain'])) {
-            $curdom = $arr_options['currentdomain'];
-            $arr_options['domains'][$curdom]['secretkey'] = $new_value;
-        }
-
-        update_option('wqrecaptcha', serialize($arr_options));
-
-    }
 
     /**
      * register admin menu
@@ -283,6 +233,9 @@ class WQRecaptcha_Admin
         // saved values
         $raw_options = get_option('wqrecaptcha');
         $arr_options = unserialize($raw_options);
+        $this->options_settings = unserialize($raw_options);
+        var_dump($this->options_settings);
+        die();
 
         switch ($arguments['type']) {
 
@@ -321,6 +274,83 @@ class WQRecaptcha_Admin
 
                 break;
         }
+    }
+
+    /**
+     * pre update options
+     *
+     * @since    1.0.0
+     *
+     * TODO : A passer en objet à sérialiser
+     *
+     */
+    public function update_options_settings($new_value, $old_value, $option_name)
+    {
+        // $this->options_settings = new WQRecaptcha_Options();
+        $raw_options = get_option('wqrecaptcha');
+        die($raw_options);
+        if (!empty($raw_options)) {
+            try {
+                $this->options_settings = unserialize($raw_options);
+            } catch (Exception $e) {
+                die('erreur');
+                $this->options_settings = new WQRecaptcha_Options();
+            }
+        } else {
+            $this->options_settings = new WQRecaptcha_Options();
+        }
+
+        if ($option_name == 'newdomain' && !empty($new_value)) {
+            $this->options_settings->add_domain($new_value);
+        }
+
+        if ($option_name == 'currentdomain' && !empty($new_value)) {
+            $this->options_settings->set_current_dom($new_value);
+        }
+
+        if ($option_name == 'sitekey' || $option_name == 'secretkey') {
+            $this->options_settings->set_sitekey($option_name, $new_value);
+        }
+
+        //
+        // $raw_options = get_option('wqrecaptcha');
+        // if (!empty($raw_options)) {
+        //     try {
+        //         $arr_options = unserialize($raw_options);
+        //     } catch (Exception $e) {
+        //         die('erreur');
+        //         $arr_options = array('currentdomain' => '', 'domains' => array());
+        //     }
+        // } else {
+        //     $arr_options = array('currentdomain' => '', 'domains' => array());
+        // }
+
+        // if ($option_name == 'newdomain' && !empty($new_value)) {
+        //     $arr_options['currentdomain'] = $new_value;
+        //     if (!key_exists($new_value, $arr_options['domains'])) {
+        //         $arr_options['domains'][$new_value] = array('sitekey' => '', 'secretkey' => '');
+        //     }
+        // }
+
+        // if ($option_name == 'currentdomain' && !empty($new_value)) {
+        //     $arr_options['currentdomain'] = $new_value;
+        //     // if (!key_exists($new_value, $arr_options['domains'])) {
+        //     //     $arr_options['domains'][$new_value] = array('sitekey' => '', 'secretkey' => '');
+        //     // }
+        // }
+
+        // if ($option_name == 'sitekey' && !empty($arr_options['currentdomain'])) {
+        //     $curdom = $arr_options['currentdomain'];
+        //     $arr_options['domains'][$curdom]['sitekey'] = $new_value;
+        // }
+
+        // if ($option_name == 'secretkey' && !empty($arr_options['currentdomain'])) {
+        //     $curdom = $arr_options['currentdomain'];
+        //     $arr_options['domains'][$curdom]['secretkey'] = $new_value;
+        // }
+
+        update_option('wqrecaptcha', serialize($this->options_settings));
+
     }
 
     /**

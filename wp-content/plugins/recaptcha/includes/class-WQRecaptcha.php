@@ -125,7 +125,7 @@ class WQRecaptcha
          * occur in the admin area.
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-WQRecaptcha-options.php';
-        $this->options_settings = new WQRecaptcha_Options();
+        
     }
     /**
      * Define the locale for this plugin for internationalization.
