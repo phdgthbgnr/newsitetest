@@ -53,6 +53,14 @@ class WQRecaptcha
      */
     protected $version;
     /**
+     * The object containing the options settings.
+     *
+     * @since    1.0.0
+     * @access   protected
+     * @var      string    $version    The current version of the plugin.
+     */
+    protected $options_settings;
+    /**
      * Define the core functionality of the plugin.
      *
      * Set the plugin name and the plugin version that can be used throughout the plugin.
@@ -112,6 +120,12 @@ class WQRecaptcha
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-WQRecaptcha-public.php';
         $this->loader = new WQRecaptcha_Loader();
+        /**
+         * The class responsible for defining all options setting serialized & recorded to DB
+         * occur in the admin area.
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-WQRecaptcha-options.php';
+        $this->options_settings = new WQRecaptcha_Options();
     }
     /**
      * Define the locale for this plugin for internationalization.
