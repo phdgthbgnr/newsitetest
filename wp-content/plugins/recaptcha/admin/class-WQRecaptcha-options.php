@@ -19,9 +19,9 @@ class WQRecaptcha_Options
 
     public function __construct()
     {
-        $this->plugin_name = $plugin_name;
-        $this->version = $version;
-        $this->root = $root;
+        // $this->plugin_name = $plugin_name;
+        // $this->version = $version;
+        // $this->root = $root;
     }
 
     public function add_domain($dom)
