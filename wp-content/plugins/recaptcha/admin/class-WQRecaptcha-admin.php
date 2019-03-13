@@ -312,43 +312,6 @@ class WQRecaptcha_Admin
             $this->options_settings->set_sitekey($option_name, $new_value);
         }
 
-        //
-        // $raw_options = get_option('wqrecaptcha');
-        // if (!empty($raw_options)) {
-        //     try {
-        //         $arr_options = unserialize($raw_options);
-        //     } catch (Exception $e) {
-        //         die('erreur');
-        //         $arr_options = array('currentdomain' => '', 'domains' => array());
-        //     }
-        // } else {
-        //     $arr_options = array('currentdomain' => '', 'domains' => array());
-        // }
-
-        // if ($option_name == 'newdomain' && !empty($new_value)) {
-        //     $arr_options['currentdomain'] = $new_value;
-        //     if (!key_exists($new_value, $arr_options['domains'])) {
-        //         $arr_options['domains'][$new_value] = array('sitekey' => '', 'secretkey' => '');
-        //     }
-        // }
-
-        // if ($option_name == 'currentdomain' && !empty($new_value)) {
-        //     $arr_options['currentdomain'] = $new_value;
-        //     // if (!key_exists($new_value, $arr_options['domains'])) {
-        //     //     $arr_options['domains'][$new_value] = array('sitekey' => '', 'secretkey' => '');
-        //     // }
-        // }
-
-        // if ($option_name == 'sitekey' && !empty($arr_options['currentdomain'])) {
-        //     $curdom = $arr_options['currentdomain'];
-        //     $arr_options['domains'][$curdom]['sitekey'] = $new_value;
-        // }
-
-        // if ($option_name == 'secretkey' && !empty($arr_options['currentdomain'])) {
-        //     $curdom = $arr_options['currentdomain'];
-        //     $arr_options['domains'][$curdom]['secretkey'] = $new_value;
-        // }
-
         update_option('wqrecaptcha', serialize($this->options_settings));
 
     }
