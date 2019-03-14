@@ -125,7 +125,7 @@ class WQRecaptcha
          * occur in the admin area.
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-WQRecaptcha-options.php';
-        
+
     }
     /**
      * Define the locale for this plugin for internationalization.
@@ -159,6 +159,7 @@ class WQRecaptcha
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
 
         // interception update settings
+        // -> class-WQRecaptcha-admin
         $this->loader->add_filter('pre_update_option_currentdomain', $plugin_admin, 'update_options_settings', 9, 3);
         $this->loader->add_filter('pre_update_option_domains', $plugin_admin, 'update_options_settings', 9, 3);
         $this->loader->add_filter('pre_update_option_newdomain', $plugin_admin, 'update_options_settings', 9, 3);

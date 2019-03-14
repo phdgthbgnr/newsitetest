@@ -232,47 +232,49 @@ class WQRecaptcha_Admin
 
         // saved values
         $raw_options = get_option('wqrecaptcha');
-        $arr_options = unserialize($raw_options);
-        $this->options_settings = unserialize($raw_options);
-        var_dump($this->options_settings);
-        die();
+        // $arr_options = unserialize($raw_options);
+        if (!empty($raw_options)) {
+            try {
+                $this->options_settings = unserialize($raw_options);
+            } catch (Exceptions $e) {
+                die("error unserialize");
+            }
+        } else {
+            $this->options_settings = new WQRecaptcha_Options();
+        }
 
-        switch ($arguments['type']) {
+        // var_dump($this->options_settings);
 
-            case 'text':
-                if ($arguments['uid'] == 'sitekey' || $arguments['uid'] == 'secretkey') {
-                    if (!empty($raw_options)) {
-                        if (isset($arr_options['currentdomain']) && isset($arr_options['domains'])) {
-                            $currentdom = $arr_options['currentdomain'];
-                            $value = $arr_options['domains'][$currentdom][$arguments['uid']];
-                        }
+        if (is_object($this->options_settings)) {
+
+            switch ($arguments['type']) {
+
+                case 'text':
+                    $uid = $arguments['uid'];
+                    $value = '';
+                    if ($uid == 'sitekey' || $uid == 'secretkey') {
+                        $value = $this->options_settings->get_sitekey($uid);
                     }
-                }
-                printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
-                break;
+                    printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $uid, $arguments['type'], $arguments['placeholder'], $value);
+                    break;
 
-            case 'select':
-                $options_markup = '';
-                if (!empty($raw_options)) {
-                    if (isset($arr_options['currentdomain']) && isset($arr_options['domains'])) {
-                        $value = $arr_options['currentdomain'];
-                        foreach ($arr_options['domains'] as $key => $val) {
-                            $options_markup .= sprintf('<option value="%s" %s data-site="%s" data-secret="%s">%s</option>', $key, selected($value, $key, false), $val['sitekey'], $val['secretkey'], $key);
-                        }
+                case 'select':
+                    $options_markup = '';
+                    $value = $this->options_settings->get_current_dom();
+                    foreach ($this->options_settings->get_all_dom() as $key => $val) {
+                        $options_markup .= sprintf('<option value="%s" %s data-site="%s" data-secret="%s">%s</option>', $key, selected($value, $key, false), $val['sitekey'], $val['secretkey'], $key);
                     }
-                }
-                printf('<select name="%1$s" id="%1$s" class="form_input_key">%2$s</select>', $arguments['uid'], $options_markup);
-                break;
 
-            case 'hidden':
-                if (!empty($raw_options)) {
-                    if (isset($arr_options['currentdomain']) && isset($arr_options['domains'])) {
-                        $value = $arr_options['currentdomain'];
-                        printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
-                    }
-                }
+                    printf('<select name="%1$s" id="%1$s" class="form_input_key">%2$s</select>', $arguments['uid'], $options_markup);
+                    break;
 
-                break;
+                case 'hidden':
+
+                    $value = $this->options_settings->get_current_dom();
+                    printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
+
+                    break;
+            }
         }
     }
 
@@ -281,14 +283,12 @@ class WQRecaptcha_Admin
      *
      * @since    1.0.0
      *
-     * TODO : A passer en objet à sérialiser
      *
      */
     public function update_options_settings($new_value, $old_value, $option_name)
     {
         // $this->options_settings = new WQRecaptcha_Options();
         $raw_options = get_option('wqrecaptcha');
-        die($raw_options);
         if (!empty($raw_options)) {
             try {
                 $this->options_settings = unserialize($raw_options);

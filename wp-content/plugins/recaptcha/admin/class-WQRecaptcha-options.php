@@ -28,18 +28,33 @@ class WQRecaptcha_Options
     {
         $this->currentDomain = $dom;
         if (empty($this->options)) {
-            array_push($this->options, array($this->root => array('currentdomain' => $dom, $dom => array('sitekey' => '', 'secretkey' => ''))));
+            $this->options[$this->root] = array($dom => array('sitekey' => '', 'secretkey' => ''));
         } else {
             if (!key_exists($dom, $this->options[$this->root])) {
-                array_push($this->options[$this->root], array('currentdomain' => $dom, $dom => array('sitekey' => '', 'secretkey' => '')));
+                array_push($this->options[$this->root][$dom] = array('sitekey' => '', 'secretkey' => ''));
             }
 
         }
     }
 
+    public function set_current_dom($dom)
+    {
+        $this->currentDomain = $dom;
+    }
+
+    public function get_current_dom()
+    {
+        return $this->currentDomain;
+    }
+
+    public function get_all_dom()
+    {
+        return $this->options[$this->root];
+    }
+
     public function add_sitekey($key, $val)
     {
-        if (key_exists($dom, $this->options[$this->root])) {
+        if (key_exists($this->currentDomain, $this->options[$this->root])) {
             $this->options[$this->root][$this->currentDomain][$key] = $val;
         }
 
@@ -57,12 +72,6 @@ class WQRecaptcha_Options
         if (key_exists($this->currentDomain, $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->currentDomain])) {
             return $this->options[$this->root][$this->currentDomain][$typekey];
         }
-    }
-
-    public function set_current_dom($dom)
-    {
-        $this->currentDomain = $dom;
-        $this->options[$this->root]['currentdomain'] = $dom;
     }
 
     public function serialize_obj()
