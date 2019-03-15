@@ -42,9 +42,9 @@ class WQRecaptcha_Public
     private $version;
 
     /**
-     * 
+     *
      * Store obect from DB
-     * 
+     *
      */
     private $options_settings;
     private $secretkey = '';
@@ -55,7 +55,7 @@ class WQRecaptcha_Public
      * @since    1.0.0
      * @param      string    $plugin_name       The name of the plugin.
      * @param      string    $version    The version of this plugin.
-     * 
+     *
      */
     public function __construct($plugin_name, $version)
     {
@@ -64,7 +64,7 @@ class WQRecaptcha_Public
         $this->version = $version;
 
         /**
-         * 
+         *
          * retrieve obect from DB
          * table : (wp)_options
          * option_name : wqrecaptcha
@@ -73,8 +73,8 @@ class WQRecaptcha_Public
         if (!empty($raw_options)) {
             try {
                 $this->options_settings = unserialize($raw_options);
-                $this->secretkey =  $this->options_settings->get_sitekey('secretkey');
-                $this->sitekey =  $this->options_settings->get_sitekey('sitekey');
+                $this->secretkey = $this->options_settings->get_sitekey('secretkey');
+                $this->sitekey = $this->options_settings->get_sitekey('sitekey');
             } catch (Exception $e) {
                 die('erreur');
             }
@@ -127,17 +127,16 @@ class WQRecaptcha_Public
          * between the defined hooks and the functions defined in this
          * class.
          */
-        wp_enqueue_script( 'grecaptacha',  'https://www.google.com/recaptcha/api.js?render='.$this->sitekey, null, null, false);
+        wp_enqueue_script('grecaptacha', 'https://www.google.com/recaptcha/api.js?render=' . $this->sitekey, null, null, false);
 
-        wp_register_script( 'WQverifcaptcha',  plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery'), '1.0', true);
-        wp_enqueue_script( 'WQverifcaptcha');
-        wp_localize_script( 'WQverifcaptcha', 'WQverifcaptcha_ajax', array(
+        wp_register_script('WQverifcaptcha', plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery'), '1.0', true);
+        wp_enqueue_script('WQverifcaptcha');
+        wp_localize_script('WQverifcaptcha', 'WQverifcaptcha_ajax', array(
             // 'url' => WP_SITEURL.'/wp-cms/wp-admin/admin-ajax.php',
-            'url' => admin_url( 'admin-ajax.php' ),
-            'sitekey' =>  $this->sitekey,
+            'url' => admin_url('admin-ajax.php'),
+            'sitekey' => $this->sitekey,
             // 'queryvars' => json_encode( $wp_query->query )
         ));
-        
 
     }
 
@@ -148,27 +147,28 @@ class WQRecaptcha_Public
         // add_action( 'wp_ajax_WQrecaptcha', array($this, 'VerifRecaptcha'));
         // add_action( 'wp_ajax_nopriv_WQrecaptcha', array($this, 'VerifRecaptcha'));
 
-		return 'shortcode'.admin_url( 'admin-ajax.php' );
+        return 'shortcode' . admin_url('admin-ajax.php');
     }
 
     /**
-     * 
+     *
      * validate site key with secret key
      */
 
-    public function VerifRecaptcha(){
+    public function VerifRecaptcha()
+    {
         $response = $_POST['token'];
         $remoteip = $_SERVER['REMOTE_ADDR'];
-        $api_url = "https://www.google.com/recaptcha/api/siteverify?secret=" 
+        $api_url = "https://www.google.com/recaptcha/api/siteverify?secret="
         . $this->secretkey
-        . "&response=" . $response
-        . "&remoteip=" . $remoteip ;
-        
+            . "&response=" . $response
+            . "&remoteip=" . $remoteip;
+
         $decode = json_decode(file_get_contents($api_url), true);
-    
+
         if ($decode['success'] == true) {
             echo 'success';
-        }else{
+        } else {
             echo 'error';
         }
         wp_die();
