@@ -132,9 +132,9 @@ class WQRecaptcha_Public
         wp_register_script( 'WQverifcaptcha',  plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery'), '1.0', true);
         wp_enqueue_script( 'WQverifcaptcha');
         wp_localize_script( 'WQverifcaptcha', 'WQverifcaptcha_ajax', array(
-            'url' => WP_SITEURL.'/wp-cms/wp-admin/admin-ajax.php',
+            // 'url' => WP_SITEURL.'/wp-cms/wp-admin/admin-ajax.php',
+            'url' => admin_url( 'admin-ajax.php' ),
             'sitekey' =>  $this->sitekey,
-            // 'url' => admin_url( 'admin-ajax.php' )
             // 'queryvars' => json_encode( $wp_query->query )
         ));
         
@@ -143,12 +143,12 @@ class WQRecaptcha_Public
 
     public function shorcode_recaptcha()
     {
-        $this->enqueue_scripts();
+        // $this->enqueue_scripts();
 
         // add_action( 'wp_ajax_WQrecaptcha', array($this, 'VerifRecaptcha'));
         // add_action( 'wp_ajax_nopriv_WQrecaptcha', array($this, 'VerifRecaptcha'));
 
-		// return 'shortcode ';
+		return 'shortcode'.admin_url( 'admin-ajax.php' );
     }
 
     /**
@@ -157,7 +157,6 @@ class WQRecaptcha_Public
      */
 
     public function VerifRecaptcha(){
-        // $secret = '6LdvMX0UAAAAAHjzjnteSH8_BEhzF2Qt00tTBd6B';
         $response = $_POST['token'];
         $remoteip = $_SERVER['REMOTE_ADDR'];
         $api_url = "https://www.google.com/recaptcha/api/siteverify?secret=" 
