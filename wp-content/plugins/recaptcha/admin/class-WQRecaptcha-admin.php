@@ -198,12 +198,12 @@ class WQRecaptcha_Admin
 
         );
         // add_settings_section($this->section, 'Add a pair site / secret key', function () {$this->section_callback();}, $this->plugin_name);
-        add_settings_section($this->section, 'Add a pair site / secret key', array($this, 'section_callback'), $this->plugin_name);
+        add_settings_section($this->section, 'Add a pair Site / Secret Keys', array($this, 'section_callback'), $this->plugin_name);
 
         $args = array(
             'type' => 'string',
             'sanitize_callback' => 'sanitize_text_field',
-            'validate_callback' => 'validate',
+            // 'validate_callback' => array($this, 'validate'),
             'default' => null,
         );
         foreach ($fields as $field) {
