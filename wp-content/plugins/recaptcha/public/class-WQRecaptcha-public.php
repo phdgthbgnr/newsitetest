@@ -57,6 +57,12 @@ class WQRecaptcha_Public
      * @param      string    $version    The version of this plugin.
      *
      */
+
+    /**
+     *  shortcode
+     */
+    private $shortcode = 'wqrecaptchav3';
+
     public function __construct($plugin_name, $version)
     {
 
@@ -80,7 +86,7 @@ class WQRecaptcha_Public
             }
         }
 
-        add_shortcode('wqrecaptchav3', array($this, 'shorcode_recaptcha'));
+        // add_shortcode('wqrecaptchav3', array($this, 'shorcode_recaptcha'));
 
     }
 
@@ -127,29 +133,44 @@ class WQRecaptcha_Public
          * between the defined hooks and the functions defined in this
          * class.
          */
-        wp_enqueue_script('grecaptacha', 'https://www.google.com/recaptcha/api.js?render=' . $this->sitekey, null, null, false);
+        wp_register_script('grecaptacha', 'https://www.google.com/recaptcha/api.js?render=' . $this->sitekey, array(), null, true);
+        wp_register_script('WQverifcaptcha', plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery','grecaptacha'), '1.0', true);
 
-        wp_register_script('WQverifcaptcha', plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery'), '1.0', true);
-        wp_enqueue_script('WQverifcaptcha');
-        wp_localize_script('WQverifcaptcha', 'WQverifcaptcha_ajax', array(
-            // 'url' => WP_SITEURL.'/wp-cms/wp-admin/admin-ajax.php',
-            'url' => admin_url('admin-ajax.php'),
-            'sitekey' => $this->sitekey,
-            // 'queryvars' => json_encode( $wp_query->query )
-        ));
+        global $post;
+        if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, $this->shortcode)) {
+
+            wp_enqueue_script('grecaptacha');
+            wp_enqueue_script('WQverifcaptcha');
+            wp_localize_script('WQverifcaptcha', 'WQverifcaptcha_ajax', array(
+                // 'url' => WP_SITEURL.'/wp-cms/wp-admin/admin-ajax.php',
+                'url' => admin_url('admin-ajax.php'),
+                'sitekey' => $this->sitekey,
+                // 'queryvars' => json_encode( $wp_query->query )
+            ));
+        }
 
     }
 
-    public function shorcode_recaptcha()
+    public function shortcode_recaptcha($atts)
     {
-        // $this->enqueue_scripts();
-
-        // add_action( 'wp_ajax_WQrecaptcha', array($this, 'VerifRecaptcha'));
-        // add_action( 'wp_ajax_nopriv_WQrecaptcha', array($this, 'VerifRecaptcha'));
-
-        return 'shortcode' . admin_url('admin-ajax.php');
+        // wp_deregister_script('grecaptcha');
+        return 'shortcode '.$this->sitekey;
     }
 
+    public function register_shortcodes()
+    {
+        add_shortcode($this->shortcode, array($this, 'shortcode_recaptcha'));
+    }
+
+    // public function check_if_shortcode($content)
+    // {
+    //     if (has_shortcode($content, $this->shortcode)) {
+    //         echo 'ok';
+
+    //         // wp_enqueue_script('WQverifcaptcha', plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery'), '1.0', false);
+    //     }
+    //     return $content;
+    // }
     /**
      *
      * validate site key with secret key

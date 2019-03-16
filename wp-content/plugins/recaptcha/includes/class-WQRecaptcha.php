@@ -184,10 +184,20 @@ class WQRecaptcha
     private function define_public_hooks()
     {
         $plugin_public = new WQRecaptcha_Public($this->get_plugin_name(), $this->get_version());
+        /**
+         * shortcode
+         */
+        $this->loader->add_action('init', $plugin_public, 'register_shortcodes');
+        /**
+         * validate captcha
+         */
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
-        $this->loader->add_action( 'wp_ajax_WQrecaptcha', $plugin_public, 'VerifRecaptcha' );
-        $this->loader->add_action( 'wp_ajax_nopriv_WQrecaptcha', $plugin_public, 'VerifRecaptcha' );
+        $this->loader->add_action('wp_ajax_WQrecaptcha', $plugin_public, 'VerifRecaptcha');
+        $this->loader->add_action('wp_ajax_nopriv_WQrecaptcha', $plugin_public, 'VerifRecaptcha');
+
+        // $this->loader->add_filter('the_content', $plugin_public, 'check_if_shortcode', 10);
+
     }
 
     /**
