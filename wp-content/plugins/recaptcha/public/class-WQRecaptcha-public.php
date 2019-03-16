@@ -151,7 +151,7 @@ class WQRecaptcha_Public
 
     }
 
-    public function shortcode_recaptcha($atts)
+    public function shortcode_content($atts)
     {
         // wp_deregister_script('grecaptcha');
         return 'shortcode '.$this->sitekey;
@@ -159,7 +159,7 @@ class WQRecaptcha_Public
 
     public function register_shortcodes()
     {
-        add_shortcode($this->shortcode, array($this, 'shortcode_recaptcha'));
+        add_shortcode($this->shortcode, array($this, 'shortcode_content'));
     }
 
     // public function check_if_shortcode($content)
