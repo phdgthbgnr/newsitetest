@@ -50,7 +50,7 @@ class WQRecaptcha_Options
         return $this->options[$this->root];
     }
 
-    public function add_sitekey($key, $val)
+    public function add_key($key, $val)
     {
         if (key_exists($this->currentDomain, $this->options[$this->root])) {
             $this->options[$this->root][$this->currentDomain][$key] = $val;
@@ -58,14 +58,14 @@ class WQRecaptcha_Options
 
     }
 
-    public function set_sitekey($typekey, $val)
+    public function set_key($typekey, $val)
     {
         if (key_exists($this->currentDomain, $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->currentDomain])) {
             $this->options[$this->root][$this->currentDomain][$typekey] = $val;
         }
     }
 
-    public function get_sitekey($typekey)
+    public function get_key($typekey)
     {
         if (key_exists($this->currentDomain, $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->currentDomain])) {
             return $this->options[$this->root][$this->currentDomain][$typekey];

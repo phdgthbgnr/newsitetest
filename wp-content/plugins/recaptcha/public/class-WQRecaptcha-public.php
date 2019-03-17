@@ -79,8 +79,8 @@ class WQRecaptcha_Public
         if (!empty($raw_options)) {
             try {
                 $this->options_settings = unserialize($raw_options);
-                $this->secretkey = $this->options_settings->get_sitekey('secretkey');
-                $this->sitekey = $this->options_settings->get_sitekey('sitekey');
+                $this->secretkey = $this->options_settings->get_key('secretkey');
+                $this->sitekey = $this->options_settings->get_key('sitekey');
             } catch (Exception $e) {
                 die('erreur');
             }

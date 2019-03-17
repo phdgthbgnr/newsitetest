@@ -253,7 +253,7 @@ class WQRecaptcha_Admin
                     $uid = $arguments['uid'];
                     $value = '';
                     if ($uid == 'sitekey' || $uid == 'secretkey') {
-                        $value = $this->options_settings->get_sitekey($uid);
+                        $value = $this->options_settings->get_key($uid);
                     }
                     printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $uid, $arguments['type'], $arguments['placeholder'], $value);
                     break;
@@ -309,7 +309,7 @@ class WQRecaptcha_Admin
         }
 
         if ($option_name == 'sitekey' || $option_name == 'secretkey') {
-            $this->options_settings->set_sitekey($option_name, $new_value);
+            $this->options_settings->set_key($option_name, $new_value);
         }
 
         update_option('wqrecaptcha', serialize($this->options_settings));
