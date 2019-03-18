@@ -133,8 +133,11 @@ class WQRecaptcha_Admin
         );
     }
 
+
     /**
-     * register plugin settings
+     * register_plugin_settings
+     *
+     * @return void
      */
     public function register_plugin_settings()
     {
@@ -217,21 +220,31 @@ class WQRecaptcha_Admin
         }
 
     }
-
+    /**
+     * section_callback
+     *
+     * @return void
+     */
     public function section_callback()
     {
         $urlparts = parse_url(home_url());
         echo '<a href="https://www.google.com/recaptcha/admin#list" target="_blank">Google recaptcha v3</a>';
         echo '<p>Current domain : <span class="beware">' . $urlparts['host'] . '</span></p>';
     }
-
+    /**
+     * field_callback
+     *
+     * @param  mixed $arguments
+     *
+     * @return void
+     */
     public function field_callback($arguments)
     {
         // default values
         $value = '';
 
         // saved values
-        $raw_options = get_option('wqrecaptcha');
+        $raw_options = get_option($this->plugin_name);
         // $arr_options = unserialize($raw_options);
         if (!empty($raw_options)) {
             try {
@@ -277,18 +290,19 @@ class WQRecaptcha_Admin
             }
         }
     }
-
     /**
-     * pre update options
+     * update_options_settings
      *
-     * @since    1.0.0
+     * @param  mixed $new_value
+     * @param  mixed $old_value
+     * @param  mixed $option_name
      *
-     *
+     * @return void
      */
     public function update_options_settings($new_value, $old_value, $option_name)
     {
-        // $this->options_settings = new WQRecaptcha_Options();
-        $raw_options = get_option('wqrecaptcha');
+       
+        $raw_options = get_option($this->plugin_name);
         if (!empty($raw_options)) {
             try {
                 $this->options_settings = unserialize($raw_options);
@@ -312,12 +326,13 @@ class WQRecaptcha_Admin
             $this->options_settings->set_key($option_name, $new_value);
         }
 
-        update_option('wqrecaptcha', serialize($this->options_settings));
+        update_option($this->plugin_name, serialize($this->options_settings));
 
     }
-
     /**
-     * add admin page
+     * options_page_html
+     *
+     * @return void
      */
     public function options_page_html()
     {

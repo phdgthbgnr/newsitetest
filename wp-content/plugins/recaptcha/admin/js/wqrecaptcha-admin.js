@@ -38,12 +38,12 @@
 			// change value current domain
 			$('#currentdomain').val(selected.val());
 		});
-		
-		$('#newdomain').on('input',function(e) {
+
+		$('#newdomain').on('input', function(e) {
 			var selected = $('#domains').find('option:selected');
-			if($('#newdomain').val() == '') {
+			if ($('#newdomain').val() == '') {
 				$('#currentdomain').val(selected.val());
-			}else{
+			} else {
 				$('#currentdomain').val($('#newdomain').val());
 			}
 		});

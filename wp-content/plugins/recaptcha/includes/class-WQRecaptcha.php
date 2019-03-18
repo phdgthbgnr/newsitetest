@@ -57,7 +57,7 @@ class WQRecaptcha
      *
      * @since    1.0.0
      * @access   protected
-     * @var      string    $version    The current version of the plugin.
+     * @var      object 
      */
     protected $options_settings;
     /**
@@ -76,7 +76,10 @@ class WQRecaptcha
         } else {
             $this->version = '1.0.0';
         }
-        $this->plugin_name = 'wqrecaptcha';
+        /**
+         * uniqid = 5c8fd2a564dc3
+         */
+        $this->plugin_name = 'wqrecaptcha_5c8fd2a564dc3';
         $this->load_dependencies();
         $this->set_locale();
         $this->define_admin_hooks();
@@ -163,9 +166,9 @@ class WQRecaptcha
         // -> class-WQRecaptcha-admin
         $this->loader->add_filter('pre_update_option_currentdomain', $plugin_admin, 'update_options_settings', 9, 3);
         $this->loader->add_filter('pre_update_option_domains', $plugin_admin, 'update_options_settings', 9, 3);
-        $this->loader->add_filter('pre_update_option_newdomain', $plugin_admin, 'update_options_settings', 9, 3);
-        $this->loader->add_filter('pre_update_option_sitekey', $plugin_admin, 'update_options_settings', 10, 3);
-        $this->loader->add_filter('pre_update_option_secretkey', $plugin_admin, 'update_options_settings', 10, 3);
+        $this->loader->add_filter('pre_update_option_newdomain', $plugin_admin, 'update_options_settings', 10, 3);
+        $this->loader->add_filter('pre_update_option_sitekey', $plugin_admin, 'update_options_settings', 11, 3);
+        $this->loader->add_filter('pre_update_option_secretkey', $plugin_admin, 'update_options_settings', 12, 3);
 
         //  interception loading settings
         // $this->loader->add_filter('pre_option_domains',  $plugin_admin, 'load_options_settings', 8, 3);

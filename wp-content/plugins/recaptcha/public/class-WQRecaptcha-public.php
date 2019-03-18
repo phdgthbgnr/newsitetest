@@ -73,9 +73,9 @@ class WQRecaptcha_Public
          *
          * retrieve obect from DB
          * table : (wp)_options
-         * option_name : wqrecaptcha
+         * option_name : $this->plugin_name
          */
-        $raw_options = get_option('wqrecaptcha');
+        $raw_options = get_option($this->plugin_name);
         if (!empty($raw_options)) {
             try {
                 $this->options_settings = unserialize($raw_options);
@@ -154,7 +154,8 @@ class WQRecaptcha_Public
     public function shortcode_content($atts)
     {
         // wp_deregister_script('grecaptcha');
-        return 'shortcode '.$this->sitekey;
+        // return 'shortcode '.$this->sitekey;
+        return '';
     }
 
     public function register_shortcodes()
@@ -162,20 +163,11 @@ class WQRecaptcha_Public
         add_shortcode($this->shortcode, array($this, 'shortcode_content'));
     }
 
-    // public function check_if_shortcode($content)
-    // {
-    //     if (has_shortcode($content, $this->shortcode)) {
-    //         echo 'ok';
-
-    //         // wp_enqueue_script('WQverifcaptcha', plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery'), '1.0', false);
-    //     }
-    //     return $content;
-    // }
     /**
+     * VerifRecaptcha
      *
-     * validate site key with secret key
+     * @return void
      */
-
     public function VerifRecaptcha()
     {
         $response = $_POST['token'];
