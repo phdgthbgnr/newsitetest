@@ -30,6 +30,8 @@
 	 */
 
 	$(document).ready(function() {
+		//
+		// select current domain
 		$('#domains').change(function(e) {
 			// change value sitekey / secretkey
 			var selected = $(this).find('option:selected');
@@ -39,6 +41,7 @@
 			$('#currentdomain').val(selected.val());
 		});
 
+		// refill hidden field currentdomain with new domain or selected domain
 		$('#newdomain').on('input', function(e) {
 			var selected = $('#domains').find('option:selected');
 			if ($('#newdomain').val() == '') {
@@ -46,6 +49,19 @@
 			} else {
 				$('#currentdomain').val($('#newdomain').val());
 			}
+		});
+
+		// unlock google api input field
+		$('#lockapi').click(function(e) {
+			$("input[name$='urlapi']").prop('disabled', function(i, v) {
+				return !v;
+			});
+			return false;
+		});
+
+		// delete domain selected
+		$('#delete_dom').click(function(e) {
+			return false;
 		});
 	});
 })(jQuery);

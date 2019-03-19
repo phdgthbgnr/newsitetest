@@ -49,6 +49,7 @@ class WQRecaptcha_Public
     private $options_settings;
     private $secretkey = '';
     public $sitekey = '';
+    public $urlapi = '';
     /**
      * Initialize the class and set its properties.
      *
@@ -81,6 +82,7 @@ class WQRecaptcha_Public
                 $this->options_settings = unserialize($raw_options);
                 $this->secretkey = $this->options_settings->get_key('secretkey');
                 $this->sitekey = $this->options_settings->get_key('sitekey');
+                $this->urlapi = $this->options_settings->get_url_api('urlapi');
             } catch (Exception $e) {
                 die('erreur');
             }
@@ -133,8 +135,8 @@ class WQRecaptcha_Public
          * between the defined hooks and the functions defined in this
          * class.
          */
-        wp_register_script('grecaptacha', 'https://www.google.com/recaptcha/api.js?render=' . $this->sitekey, array(), null, true);
-        wp_register_script('WQverifcaptcha', plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery','grecaptacha'), '1.0', true);
+        wp_register_script('grecaptacha', $this->urlapi . $this->sitekey, array(), null, true);
+        wp_register_script('WQverifcaptcha', plugin_dir_url(__FILE__) . 'js/wqrecaptcha-public.js', array('jquery', 'grecaptacha'), '1.0', true);
 
         global $post;
         if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, $this->shortcode)) {
@@ -153,8 +155,7 @@ class WQRecaptcha_Public
 
     public function shortcode_content($atts)
     {
-        // wp_deregister_script('grecaptcha');
-        // return 'shortcode '.$this->sitekey;
+        // return nothing
         return '';
     }
 

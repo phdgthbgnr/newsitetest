@@ -27,6 +27,14 @@ class WQRecaptcha_Options
      */
     private $currentDomain = '';
     /**
+     * URL API (site key)
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $root The current root name of collection of domains / pair sitekey - secretkey.
+     */
+    private $urlApi = '';
+    /**
      * init Array options with root ID
      *
      *
@@ -55,6 +63,30 @@ class WQRecaptcha_Options
             }
 
         }
+    }
+    /**
+     * set the selected current domain
+     *
+     *
+     * @since   1.0.0
+     * @access  public
+     * @return  string
+     */
+    public function get_url_api()
+    {
+        return $this->urlApi;
+    }
+    /**
+     * set the selected current domain
+     *
+     *
+     * @since   1.0.0
+     * @access  public
+     * @var     string
+     */
+    public function set_url_api($url)
+    {
+        $this->urlApi = $url;
     }
     /**
      * set the selected current domain

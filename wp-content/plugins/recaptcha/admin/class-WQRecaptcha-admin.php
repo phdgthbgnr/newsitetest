@@ -133,7 +133,6 @@ class WQRecaptcha_Admin
         );
     }
 
-
     /**
      * register_plugin_settings
      *
@@ -143,20 +142,10 @@ class WQRecaptcha_Admin
     {
         // default settings
         $fields = array(
-            array(
-                'uid' => 'currentdomain',
-                'label' => '',
-                'section' => $this->section,
-                'type' => 'hidden',
-                'options' => false,
-                'placeholder' => '',
-                'helper' => 'Does this help?',
-                'supplemental' => 'secret key google recaptcha v3',
-                'default' => '',
-            ),
+
             array(
                 'uid' => 'domains',
-                'label' => 'Sélectionner un domaine',
+                'label' => 'Domaine en cours',
                 'section' => $this->section,
                 'type' => 'select',
                 'options' => array(''),
@@ -198,10 +187,33 @@ class WQRecaptcha_Admin
                 'supplemental' => 'secret key google recaptcha v3',
                 'default' => '',
             ),
+            array(
+                'uid' => 'currentdomain',
+                'label' => '',
+                'section' => $this->section,
+                'type' => 'hidden',
+                'options' => false,
+                'placeholder' => '',
+                'helper' => 'Does this help?',
+                'supplemental' => 'secret key google recaptcha v3',
+                'default' => '',
+            ),
+            array(
+                'uid' => 'urlapi',
+                'label' => 'URL API (site key)',
+                'section' => $this->section . '_api',
+                'type' => 'text',
+                'options' => false,
+                'placeholder' => 'url api google',
+                'helper' => 'Does this help?',
+                'supplemental' => 'secret key google recaptcha v3',
+                'default' => '',
+            ),
 
         );
         // add_settings_section($this->section, 'Add a pair site / secret key', function () {$this->section_callback();}, $this->plugin_name);
         add_settings_section($this->section, 'Add a pair Site / Secret Keys', array($this, 'section_callback'), $this->plugin_name);
+        add_settings_section($this->section . '_api', 'Google api url', array($this, 'section_api_callback'), $this->plugin_name);
 
         $args = array(
             'type' => 'string',
@@ -225,12 +237,23 @@ class WQRecaptcha_Admin
      *
      * @return void
      */
-    public function section_callback()
+    public function section_callback($e)
     {
         $urlparts = parse_url(home_url());
-        echo '<a href="https://www.google.com/recaptcha/admin#list" target="_blank">Google recaptcha v3</a>';
+        echo '<p><a href="https://www.google.com/recaptcha/admin#list" target="_blank">Google recaptcha v3</a></p>';
         echo '<p>Current domain : <span class="beware">' . $urlparts['host'] . '</span></p>';
     }
+    /**
+     * section_api_callback
+     *
+     * @return void
+     */
+    public function section_api_callback($e)
+    {
+        echo '<p>URL de validation de la clé publique [site key] entrée dans le champ Site Key</p>
+        <p class="greytint">' . $this->options_settings->get_url_api() . '[sitekey]</p>';
+    }
+
     /**
      * field_callback
      *
@@ -267,8 +290,13 @@ class WQRecaptcha_Admin
                     $value = '';
                     if ($uid == 'sitekey' || $uid == 'secretkey') {
                         $value = $this->options_settings->get_key($uid);
+                        printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $uid, $arguments['type'], $arguments['placeholder'], $value);
+                    } elseif ($uid == 'urlapi') {
+                        $value = $this->options_settings->get_url_api();
+                        printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" disabled="true"/><a href="#" id="lockapi" class="lock_api">Modifier</a>', $uid, $arguments['type'], $arguments['placeholder'], $value);
+                    } else {
+                        printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key"/>', $uid, $arguments['type'], $arguments['placeholder'], $value);
                     }
-                    printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $uid, $arguments['type'], $arguments['placeholder'], $value);
                     break;
 
                 case 'select':
@@ -278,13 +306,13 @@ class WQRecaptcha_Admin
                         $options_markup .= sprintf('<option value="%s" %s data-site="%s" data-secret="%s">%s</option>', $key, selected($value, $key, false), $val['sitekey'], $val['secretkey'], $key);
                     }
 
-                    printf('<select name="%1$s" id="%1$s" class="form_input_key">%2$s</select>', $arguments['uid'], $options_markup);
+                    printf('<select name="%1$s" id="%1$s" class="form_input_key">%2$s</select><a href="#" id="delete_dom">Supprimer ce domaine</a>', $arguments['uid'], $options_markup);
                     break;
 
                 case 'hidden':
 
                     $value = $this->options_settings->get_current_dom();
-                    printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
+                    printf('<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" class="form_input_key_hidden" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value);
 
                     break;
             }
@@ -301,7 +329,7 @@ class WQRecaptcha_Admin
      */
     public function update_options_settings($new_value, $old_value, $option_name)
     {
-       
+
         $raw_options = get_option($this->plugin_name);
         if (!empty($raw_options)) {
             try {
@@ -324,6 +352,10 @@ class WQRecaptcha_Admin
 
         if ($option_name == 'sitekey' || $option_name == 'secretkey') {
             $this->options_settings->set_key($option_name, $new_value);
+        }
+
+        if ($option_name == 'urlapi') {
+            $this->options_settings->set_url_api($new_value);
         }
 
         update_option($this->plugin_name, serialize($this->options_settings));

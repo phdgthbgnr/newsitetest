@@ -169,6 +169,7 @@ class WQRecaptcha
         $this->loader->add_filter('pre_update_option_newdomain', $plugin_admin, 'update_options_settings', 10, 3);
         $this->loader->add_filter('pre_update_option_sitekey', $plugin_admin, 'update_options_settings', 11, 3);
         $this->loader->add_filter('pre_update_option_secretkey', $plugin_admin, 'update_options_settings', 12, 3);
+        $this->loader->add_filter('pre_update_option_urlapi', $plugin_admin, 'update_options_settings', 13, 3);
 
         //  interception loading settings
         // $this->loader->add_filter('pre_option_domains',  $plugin_admin, 'load_options_settings', 8, 3);
@@ -192,9 +193,12 @@ class WQRecaptcha
          */
         $this->loader->add_action('init', $plugin_public, 'register_shortcodes');
         /**
-         * validate captcha
+         * css public
          */
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
+        /**
+         * ajax validate captcha
+         */
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
         $this->loader->add_action('wp_ajax_WQrecaptcha', $plugin_public, 'VerifRecaptcha');
         $this->loader->add_action('wp_ajax_nopriv_WQrecaptcha', $plugin_public, 'VerifRecaptcha');
