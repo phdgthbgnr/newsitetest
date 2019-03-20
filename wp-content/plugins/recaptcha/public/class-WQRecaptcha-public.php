@@ -173,17 +173,35 @@ class WQRecaptcha_Public
     {
         $response = $_POST['token'];
         $remoteip = $_SERVER['REMOTE_ADDR'];
-        $api_url = "https://www.google.com/recaptcha/api/siteverify?secret="
-        . $this->secretkey
-            . "&response=" . $response
-            . "&remoteip=" . $remoteip;
+        // $api_url = "https://www.google.com/recaptcha/api/siteverify?secret="
+        // . $this->secretkey
+        //     . "&response=" . $response
+        //     . "&remoteip=" . $remoteip;
 
-        $decode = json_decode(file_get_contents($api_url), true);
+        // $decode = json_decode(file_get_contents($api_url), true);
+
+        $data = array(
+            'secret' => $this->secretkey,
+            'response' => $response,
+            'remoteip' => $remoteip,
+        );
+
+        $curlConfig = array(
+            CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
+            CURLOPT_POST => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POSTFIELDS => $data,
+        );
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $curlConfig);
+        $decode = curl_exec($ch);
+        curl_close($ch);
 
         if ($decode['success'] == true) {
             echo 'success';
         } else {
-            echo 'error';
+            echo json_encode(array('error' => $decode));
         }
         wp_die();
     }
