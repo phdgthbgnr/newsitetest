@@ -110,8 +110,15 @@ class WQRecaptcha_Admin
          * between the defined hooks and the functions defined in this
          * class.
          */
+        wp_register_script('WQ_admin_recaptcha', plugin_dir_url(__FILE__) . 'js/wqrecaptcha-admin.js', array('jquery'), '1.0', true);
 
-        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/wqrecaptcha-admin.js', array('jquery'), $this->version, false);
+        wp_enqueue_script('WQ_admin_recaptcha');
+        wp_localize_script('WQ_admin_recaptcha', 'WQ_admin_recaptcha_ajax', array(
+            // 'url' => WP_SITEURL.'/wp-cms/wp-admin/admin-ajax.php',
+            'url' => admin_url('admin-ajax.php'),
+            // 'currentDomain' => $this->options_settings->get_current_dom(),
+            // 'queryvars' => json_encode( $wp_query->query )
+        ));
 
     }
 
@@ -373,6 +380,24 @@ class WQRecaptcha_Admin
             return;
         }
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/wprecaptcha-admin-display.php';
+    }
+    /**
+     * remove selected domain
+     *
+     * @return void
+     */
+    public function WQAdminRecaptcha()
+    {
+        $raw_options = get_option($this->plugin_name);
+        if (!empty($raw_options)) {
+            try {
+                $this->options_settings = unserialize($raw_options);
+                
+            } catch (Exception $e) {
+                echo json_encode(array('error' => $e));
+            }
+        }
+        wp_die();
     }
 
 }

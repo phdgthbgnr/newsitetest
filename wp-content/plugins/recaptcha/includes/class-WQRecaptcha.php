@@ -161,6 +161,7 @@ class WQRecaptcha
 
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+        $this->loader->add_action('wp_ajax_WQ_admin_recaptcha', $plugin_admin, 'WQAdminRecaptcha');
 
         // interception update settings
         // -> class-WQRecaptcha-admin
