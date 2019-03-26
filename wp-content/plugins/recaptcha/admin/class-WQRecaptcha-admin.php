@@ -392,6 +392,7 @@ class WQRecaptcha_Admin
         if (!empty($raw_options)) {
             try {
                 $this->options_settings = unserialize($raw_options);
+                echo json_encode(array('success' => $e));
                 
             } catch (Exception $e) {
                 echo json_encode(array('error' => $e));
