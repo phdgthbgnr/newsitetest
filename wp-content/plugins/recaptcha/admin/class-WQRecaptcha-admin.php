@@ -116,6 +116,7 @@ class WQRecaptcha_Admin
         wp_localize_script('WQ_admin_recaptcha', 'WQ_admin_recaptcha_ajax', array(
             // 'url' => WP_SITEURL.'/wp-cms/wp-admin/admin-ajax.php',
             'url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('global_nonce_admin'),
             // 'currentDomain' => $this->options_settings->get_current_dom(),
             // 'queryvars' => json_encode( $wp_query->query )
         ));
@@ -388,14 +389,22 @@ class WQRecaptcha_Admin
      */
     public function WQAdminRecaptcha()
     {
-        $raw_options = get_option($this->plugin_name);
-        if (!empty($raw_options)) {
-            try {
-                $this->options_settings = unserialize($raw_options);
-                echo json_encode(array('success' => $e));
-                
-            } catch (Exception $e) {
-                echo json_encode(array('error' => $e));
+        check_ajax_referer('global_nonce_admin');
+
+        if ($_POST && isset($_POST['requestTarget'])) {
+            switch ($_POST['requestTarget']) {
+                case 'removeDomain':
+                    $raw_options = get_option($this->plugin_name);
+                    if (!empty($raw_options)) {
+                        try {
+                            $this->options_settings = unserialize($raw_options);
+                            echo json_encode(array('success' => $e));
+
+                        } catch (Exception $e) {
+                            echo json_encode(array('error' => $e));
+                        }
+                    }
+                    break;
             }
         }
         wp_die();

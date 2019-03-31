@@ -62,11 +62,17 @@
 		// delete domain selected
 		$('#delete_dom').click(function (e) {
 			var URL = WQ_admin_recaptcha_ajax.url;
+			var nonce = WQ_admin_recaptcha_ajax.nonce;
 			$.ajax({
 				url: URL,
 				type: 'POST',
 				data: {
+					// definie dans enqueue
 					action: 'WQ_admin_recaptcha',
+					_ajax_nonce:nonce,
+					// cible de la requete
+					requestTarget:'removeDomain',
+
 					// queryvars: verifcaptcha_ajax.queryvars
 				},
 				success: function (res) {
