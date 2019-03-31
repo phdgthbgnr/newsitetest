@@ -155,8 +155,8 @@ class WQRecaptcha_Options
             $this->options[$this->root][$this->currentDomain][$typekey] = $val;
         }
     }
-     /**
-     * set key
+    /**
+     * get key
      *
      *
      * @since   1.0.0
@@ -170,7 +170,22 @@ class WQRecaptcha_Options
             return $this->options[$this->root][$this->currentDomain][$typekey];
         }
     }
+    /**
+     * 
+     */
 
+    public function remove_domain()
+    {
+        if (count($this->options[$this->root])>0 && key_exists($this->currentDomain, $this->options[$this->root])) {
+            unset( $this->options[$this->root][$this->currentDomain]);
+            // $this->currentDomain = array_key_first($this->options[$this->root]);
+
+            return 'success';
+        }else{
+            return 'error';
+        }
+    }
+    
     public function serialize_obj()
     {
         return serialize($this);

@@ -398,7 +398,13 @@ class WQRecaptcha_Admin
                     if (!empty($raw_options)) {
                         try {
                             $this->options_settings = unserialize($raw_options);
-                            echo json_encode(array('success' => $e));
+                            $res = $this->options_settings->remove_domain();
+                            if($res == 'success'){
+                                update_option($this->plugin_name, serialize($this->options_settings));
+                                echo json_encode('success');
+                            }else{
+                                echo json_encode('error');
+                            }
 
                         } catch (Exception $e) {
                             echo json_encode(array('error' => $e));
