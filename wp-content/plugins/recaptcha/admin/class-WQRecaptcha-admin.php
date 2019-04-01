@@ -275,17 +275,8 @@ class WQRecaptcha_Admin
         $value = '';
 
         // saved values
-        $raw_options = get_option($this->plugin_name);
-        // $arr_options = unserialize($raw_options);
-        if (!empty($raw_options)) {
-            try {
-                $this->options_settings = unserialize($raw_options);
-            } catch (Exceptions $e) {
-                die("error unserialize");
-            }
-        } else {
-            $this->options_settings = new WQRecaptcha_Options();
-        }
+        $this->options_settings = new WQRecaptcha_Options($this->plugin_name);
+        $this->options_settings->getOption_and_unserialize();
 
         // var_dump($this->options_settings);
 
@@ -338,17 +329,8 @@ class WQRecaptcha_Admin
     public function update_options_settings($new_value, $old_value, $option_name)
     {
 
-        $raw_options = get_option($this->plugin_name);
-        if (!empty($raw_options)) {
-            try {
-                $this->options_settings = unserialize($raw_options);
-            } catch (Exception $e) {
-                die('erreur');
-                $this->options_settings = new WQRecaptcha_Options();
-            }
-        } else {
-            $this->options_settings = new WQRecaptcha_Options();
-        }
+        $this->options_settings = new WQRecaptcha_Options($this->plugin_name);
+        $this->options_settings->getOption_and_unserialize();
 
         if ($option_name == 'newdomain' && !empty($new_value)) {
             $this->options_settings->add_domain($new_value);
@@ -366,7 +348,7 @@ class WQRecaptcha_Admin
             $this->options_settings->set_url_api($new_value);
         }
 
-        update_option($this->plugin_name, serialize($this->options_settings));
+        $this->options_settings->serialize_and_updateOption();
 
     }
     /**
@@ -382,8 +364,9 @@ class WQRecaptcha_Admin
         }
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/partials/wprecaptcha-admin-display.php';
     }
+
     /**
-     * remove selected domain
+     * WQAdminRecaptcha
      *
      * @return void
      */
@@ -394,22 +377,17 @@ class WQRecaptcha_Admin
         if ($_POST && isset($_POST['requestTarget'])) {
             switch ($_POST['requestTarget']) {
                 case 'removeDomain':
-                    $raw_options = get_option($this->plugin_name);
-                    if (!empty($raw_options)) {
-                        try {
-                            $this->options_settings = unserialize($raw_options);
-                            $res = $this->options_settings->remove_domain();
-                            if($res == 'success'){
-                                update_option($this->plugin_name, serialize($this->options_settings));
-                                echo json_encode('success');
-                            }else{
-                                echo json_encode('error');
-                            }
 
-                        } catch (Exception $e) {
-                            echo json_encode(array('error' => $e));
-                        }
+                    $this->options_settings->getOption_and_unserialize();
+                    $res = $this->options_settings->remove_domain();
+                    if ($res == 'success') {
+
+                        $this->options_settings->serialize_and_updateOption();
+                        echo json_encode('success');
+                    } else {
+                        echo json_encode('error');
                     }
+
                     break;
             }
         }

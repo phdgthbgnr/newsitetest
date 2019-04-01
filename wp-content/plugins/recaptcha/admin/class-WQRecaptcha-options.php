@@ -35,13 +35,22 @@ class WQRecaptcha_Options
      */
     private $urlApi = '';
     /**
+     * URL API (site key)
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      string    $root The current root name of collection of domains / pair sitekey - secretkey.
+     */
+    private $plugin_name;
+    /**
      * init Array options with root ID
      *
      *
      * @since   1.0.0
      */
-    public function __construct()
+    public function __construct($n)
     {
+        $this->plugin_name = $n;
         $this->options[$this->root] = array();
     }
     /**
@@ -171,23 +180,46 @@ class WQRecaptcha_Options
         }
     }
     /**
-     * 
+     *
      */
 
     public function remove_domain()
     {
-        if (count($this->options[$this->root])>0 && key_exists($this->currentDomain, $this->options[$this->root])) {
-            unset( $this->options[$this->root][$this->currentDomain]);
+        if (count($this->options[$this->root]) > 0 && key_exists($this->currentDomain, $this->options[$this->root])) {
+            unset($this->options[$this->root][$this->currentDomain]);
             // $this->currentDomain = array_key_first($this->options[$this->root]);
 
             return 'success';
-        }else{
+        } else {
             return 'error';
         }
     }
-    
-    public function serialize_obj()
+
+    /**
+     * serialize_and_update
+     *
+     * @access  public
+     * @return void
+     */
+    public function serialize_and_updateOption()
     {
-        return serialize($this);
+        update_option($this->plugin_name, serialize($this->options));
+    }
+    /**
+     * serialize_and_update
+     *
+     * @access  public
+     * @return void
+     */
+    public function getOption_and_unserialize()
+    {
+        $raw_options = get_option($this->plugin_name);
+        if (!empty($raw_options)) {
+            try {
+                $this->options = unserialize($raw_options);
+            } catch (Exception $e) {
+                die('erreur');
+            }
+        }
     }
 }
