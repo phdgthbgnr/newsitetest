@@ -52,6 +52,8 @@ class WQRecaptcha_Options
     {
         $this->plugin_name = $n;
         $this->options[$this->root] = array();
+        $this->options['currentDomain'] = '';
+        $this->options['urlAPI'] = '';
     }
     /**
      * init Array options with root ID
@@ -63,8 +65,9 @@ class WQRecaptcha_Options
      */
     public function add_domain($dom)
     {
-        $this->currentDomain = $dom;
-        if (empty($this->options)) {
+        // $this->currentDomain = $dom;
+        $this->options['currentDomain'] = $dom;
+        if (empty($this->options[$this->root])) {
             $this->options[$this->root] = array($dom => array('sitekey' => '', 'secretkey' => ''));
         } else {
             if (!key_exists($dom, $this->options[$this->root])) {
@@ -83,7 +86,7 @@ class WQRecaptcha_Options
      */
     public function get_url_api()
     {
-        return $this->urlApi;
+        return $this->options['urlAPI'];
     }
     /**
      * set the selected current domain
@@ -95,7 +98,7 @@ class WQRecaptcha_Options
      */
     public function set_url_api($url)
     {
-        $this->urlApi = $url;
+        $this->options['urlAPI'] = $url;
     }
     /**
      * set the selected current domain
@@ -107,7 +110,8 @@ class WQRecaptcha_Options
      */
     public function set_current_dom($dom)
     {
-        $this->currentDomain = $dom;
+        // $this->currentDomain = $dom;
+        $this->options['currentDomain'] = $dom;
     }
     /**
      * return the selected current domain
@@ -119,7 +123,7 @@ class WQRecaptcha_Options
      */
     public function get_current_dom()
     {
-        return $this->currentDomain;
+        return $this->options['currentDomain'];
     }
     /**
      * return all domains
@@ -144,8 +148,8 @@ class WQRecaptcha_Options
      */
     public function add_key($key, $val)
     {
-        if (key_exists($this->currentDomain, $this->options[$this->root])) {
-            $this->options[$this->root][$this->currentDomain][$key] = $val;
+        if (key_exists($this->options['currentDomain'], $this->options[$this->root])) {
+            $this->options[$this->root][$this->options['currentDomain']][$key] = $val;
         }
 
     }
@@ -160,8 +164,8 @@ class WQRecaptcha_Options
      */
     public function set_key($typekey, $val)
     {
-        if (key_exists($this->currentDomain, $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->currentDomain])) {
-            $this->options[$this->root][$this->currentDomain][$typekey] = $val;
+        if (key_exists($this->options['currentDomain'], $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->options['currentDomain']])) {
+            $this->options[$this->root][$this->options['currentDomain']][$typekey] = $val;
         }
     }
     /**
@@ -175,8 +179,8 @@ class WQRecaptcha_Options
      */
     public function get_key($typekey)
     {
-        if (key_exists($this->currentDomain, $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->currentDomain])) {
-            return $this->options[$this->root][$this->currentDomain][$typekey];
+        if (key_exists($this->options['currentDomain'], $this->options[$this->root]) && key_exists($typekey, $this->options[$this->root][$this->options['currentDomain']])) {
+            return $this->options[$this->root][$this->options['currentDomain']][$typekey];
         }
     }
     /**
@@ -185,8 +189,8 @@ class WQRecaptcha_Options
 
     public function remove_domain()
     {
-        if (count($this->options[$this->root]) > 0 && key_exists($this->currentDomain, $this->options[$this->root])) {
-            unset($this->options[$this->root][$this->currentDomain]);
+        if (count($this->options[$this->root]) > 0 && key_exists($this->options['currentDomain'], $this->options[$this->root])) {
+            unset($this->options[$this->root][$this->options['currentDomain']]);
             // $this->currentDomain = array_key_first($this->options[$this->root]);
 
             return 'success';

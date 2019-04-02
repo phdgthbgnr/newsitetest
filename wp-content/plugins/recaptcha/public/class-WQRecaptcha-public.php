@@ -79,7 +79,8 @@ class WQRecaptcha_Public
         $raw_options = get_option($this->plugin_name);
         if (!empty($raw_options)) {
             try {
-                $this->options_settings = unserialize($raw_options);
+                $this->options_settings = new WQRecaptcha_Options($this->plugin_name);
+                $this->options_settings->getOption_and_unserialize();
                 $this->secretkey = $this->options_settings->get_key('secretkey');
                 $this->sitekey = $this->options_settings->get_key('sitekey');
                 $this->urlapi = $this->options_settings->get_url_api('urlapi');
