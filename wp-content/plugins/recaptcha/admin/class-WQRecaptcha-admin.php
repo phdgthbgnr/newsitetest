@@ -342,7 +342,7 @@ class WQRecaptcha_Admin
             $this->options_settings->set_key($option_name, $new_value);
         }
 
-        if ($option_name == 'urlapi') {
+        if ($option_name == 'urlapi' && !empty($new_value)) {
             $this->options_settings->set_url_api($new_value);
         }
 

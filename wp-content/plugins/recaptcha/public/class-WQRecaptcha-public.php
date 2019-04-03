@@ -76,17 +76,16 @@ class WQRecaptcha_Public
          * table : (wp)_options
          * option_name : $this->plugin_name
          */
-        $raw_options = get_option($this->plugin_name);
-        if (!empty($raw_options)) {
-            try {
-                $this->options_settings = new WQRecaptcha_Options($this->plugin_name);
-                $this->options_settings->getOption_and_unserialize();
-                $this->secretkey = $this->options_settings->get_key('secretkey');
-                $this->sitekey = $this->options_settings->get_key('sitekey');
-                $this->urlapi = $this->options_settings->get_url_api('urlapi');
-            } catch (Exception $e) {
-                die('erreur');
-            }
+
+        try {
+            $this->options_settings = new WQRecaptcha_Options($this->plugin_name);
+            $this->options_settings->getOption_and_unserialize();
+            $this->secretkey = $this->options_settings->get_key('secretkey');
+            $this->sitekey = $this->options_settings->get_key('sitekey');
+            $this->urlapi = $this->options_settings->get_url_api('urlapi');
+            // die();
+        } catch (Exception $e) {
+            die('erreur');
         }
 
         // add_shortcode('wqrecaptchav3', array($this, 'shorcode_recaptcha'));
