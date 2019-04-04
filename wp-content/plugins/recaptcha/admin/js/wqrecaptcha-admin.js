@@ -1,4 +1,4 @@
-(function ($) {
+(function($) {
 	'use strict';
 
 	/**
@@ -29,10 +29,10 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
-	$(document).ready(function () {
+	$(document).ready(function() {
 		//
 		// select current domain
-		$('#domains').change(function (e) {
+		$('#domains').change(function(e) {
 			// change value sitekey / secretkey
 			var selected = $(this).find('option:selected');
 			$('#sitekey').val(selected.data('site'));
@@ -42,7 +42,7 @@
 		});
 
 		// refill hidden field currentdomain with new domain or selected domain
-		$('#newdomain').on('input', function (e) {
+		$('#newdomain').on('input', function(e) {
 			var selected = $('#domains').find('option:selected');
 			if ($('#newdomain').val() == '') {
 				$('#currentdomain').val(selected.val());
@@ -52,34 +52,34 @@
 		});
 
 		// unlock google api input field
-		$('#lockapi').click(function (e) {
-			$("input[name$='urlapi']").prop('disabled', function (i, v) {
+		$('#lockapi').click(function(e) {
+			$("input[name$='urlapi']").prop('disabled', function(i, v) {
 				return !v;
 			});
 			return false;
 		});
 
 		// delete domain selected
-		$('#delete_dom').click(function (e) {
+		$('#delete_dom').click(function(e) {
 			var URL = WQ_admin_recaptcha_ajax.url;
 			var nonce = WQ_admin_recaptcha_ajax.nonce;
 			$.ajax({
-				url: URL,
-				type: 'POST',
-				data: {
+				url     : URL,
+				type    : 'POST',
+				data    : {
 					// definie dans enqueue
-					action: 'WQ_admin_recaptcha',
-					_ajax_nonce:nonce,
+					action        : 'WQ_admin_recaptcha',
+					_ajax_nonce   : nonce,
 					// cible de la requete
-					requestTarget:'removeDomain',
+					requestTarget : 'removeDomain'
 
 					// queryvars: verifcaptcha_ajax.queryvars
 				},
-				success: function (res) {
+				success : function(res) {
 					if (res == 'success') console.log('success ', res);
 					// if(res=='error') ...;
 				},
-				error: function (err) {
+				error   : function(err) {
 					console.log('error', err);
 				}
 			});

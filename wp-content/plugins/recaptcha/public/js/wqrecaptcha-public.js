@@ -1,7 +1,7 @@
-(function ($) {
+(function($) {
 	'use strict';
 
-	$(document).ready(function () {
+	$(document).ready(function() {
 		/**
 		 * disable submit buttons / input
 		 */
@@ -10,28 +10,30 @@
 		var sitekey = WQverifcaptcha_ajax.sitekey;
 		var URL = WQverifcaptcha_ajax.url;
 		// site key preprod
-		grecaptcha.ready(function () {
-			grecaptcha.execute(sitekey, {
-				action: 'contact'
-			}).then(function (token) {
-				// Verify the token on the server.
-				$.ajax({
-					url: URL,
-					type: 'POST',
-					data: {
-						action: 'WQrecaptcha',
-						token: token
-						// queryvars: verifcaptcha_ajax.queryvars
-					},
-					success: function (res) {
-						if (res == 'success') $(':submit').prop('disabled', false);
-						// if(res=='error') ...;
-					},
-					error: function (err) {
-						console.log('error', err);
-					}
+		grecaptcha.ready(function() {
+			grecaptcha
+				.execute(sitekey, {
+					action : 'contact'
+				})
+				.then(function(token) {
+					// Verify the token on the server.
+					$.ajax({
+						url     : URL,
+						type    : 'POST',
+						data    : {
+							action : 'WQrecaptcha',
+							token  : token
+							// queryvars: verifcaptcha_ajax.queryvars
+						},
+						success : function(res) {
+							if (res == 'success') $(':submit').prop('disabled', false);
+							// if(res=='error') ...;
+						},
+						error   : function(err) {
+							console.log('error', err);
+						}
+					});
 				});
-			});
 		});
 	});
 })(jQuery);
