@@ -150,7 +150,17 @@ class WQRecaptcha_Admin
     {
         // default settings
         $fields = array(
-
+            array(
+                'uid' => 'currentdomain',
+                'label' => '',
+                'section' => $this->section,
+                'type' => 'hidden',
+                'options' => false,
+                'placeholder' => '',
+                'helper' => 'Does this help?',
+                'supplemental' => 'secret key google recaptcha v3',
+                'default' => '',
+            ),
             array(
                 'uid' => 'domains',
                 'label' => 'Domaine en cours',
@@ -195,17 +205,7 @@ class WQRecaptcha_Admin
                 'supplemental' => 'secret key google recaptcha v3',
                 'default' => '',
             ),
-            array(
-                'uid' => 'currentdomain',
-                'label' => '',
-                'section' => $this->section,
-                'type' => 'hidden',
-                'options' => false,
-                'placeholder' => '',
-                'helper' => 'Does this help?',
-                'supplemental' => 'secret key google recaptcha v3',
-                'default' => '',
-            ),
+
             array(
                 'uid' => 'urlapi',
                 'label' => 'URL API (site key)',
@@ -319,9 +319,9 @@ class WQRecaptcha_Admin
     /**
      * update_options_settings
      *
-     * @param  mixed $new_value
-     * @param  mixed $old_value
-     * @param  mixed $option_name
+     * @param  string $new_value
+     * @param  string $old_value
+     * @param  string $option_name
      *
      * @return void
      */
@@ -330,12 +330,12 @@ class WQRecaptcha_Admin
         $this->options_settings = new WQRecaptcha_Options($this->plugin_name);
         $this->options_settings->getOption_and_unserialize();
 
-        if ($option_name == 'newdomain' && !empty($new_value)) {
-            $this->options_settings->add_domain($new_value);
-        }
-
         if ($option_name == 'currentdomain' && !empty($new_value)) {
             $this->options_settings->set_current_dom($new_value);
+        }
+
+        if ($option_name == 'newdomain' && !empty($new_value)) {
+            $this->options_settings->add_domain($new_value);
         }
 
         if ($option_name == 'sitekey' || $option_name == 'secretkey') {

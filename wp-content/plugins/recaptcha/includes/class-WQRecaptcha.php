@@ -165,12 +165,12 @@ class WQRecaptcha
 
         // interception update settings
         // -> class-WQRecaptcha-admin
-        $this->loader->add_filter('pre_update_option_currentdomain', $plugin_admin, 'update_options_settings', 9, 3);
-        $this->loader->add_filter('pre_update_option_domains', $plugin_admin, 'update_options_settings', 9, 3);
+        $this->loader->add_filter('pre_update_option_currentdomain', $plugin_admin, 'update_options_settings', 10, 3);
+        $this->loader->add_filter('pre_update_option_domains', $plugin_admin, 'update_options_settings', 10, 3);
         $this->loader->add_filter('pre_update_option_newdomain', $plugin_admin, 'update_options_settings', 10, 3);
-        $this->loader->add_filter('pre_update_option_sitekey', $plugin_admin, 'update_options_settings', 11, 3);
-        $this->loader->add_filter('pre_update_option_secretkey', $plugin_admin, 'update_options_settings', 12, 3);
-        $this->loader->add_filter('pre_update_option_urlapi', $plugin_admin, 'update_options_settings', 13, 3);
+        $this->loader->add_filter('pre_update_option_sitekey', $plugin_admin, 'update_options_settings', 10, 3);
+        $this->loader->add_filter('pre_update_option_secretkey', $plugin_admin, 'update_options_settings', 10, 3);
+        $this->loader->add_filter('pre_update_option_urlapi', $plugin_admin, 'update_options_settings', 10, 3);
 
         //  interception loading settings
         // $this->loader->add_filter('pre_option_domains',  $plugin_admin, 'load_options_settings', 8, 3);
