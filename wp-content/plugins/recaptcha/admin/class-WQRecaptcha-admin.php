@@ -375,9 +375,10 @@ class WQRecaptcha_Admin
         if ($_POST && isset($_POST['requestTarget'])) {
             switch ($_POST['requestTarget']) {
                 case 'removeDomain':
+                    $domain = $_POST['domain'];
                     $this->options_settings = new WQRecaptcha_Options($this->plugin_name);
                     $this->options_settings->getOption_and_unserialize();
-                    $res = $this->options_settings->remove_domain();
+                    $res = $this->options_settings->remove_domain($domain);
                     if ($res == 'success') {
                         $this->options_settings->serialize_and_updateOption();
                         echo json_encode('success');

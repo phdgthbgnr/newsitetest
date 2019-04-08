@@ -187,11 +187,11 @@ class WQRecaptcha_Options
      *
      */
 
-    public function remove_domain()
+    public function remove_domain($dom)
     {
-        if (count($this->options[$this->root]) > 0 && key_exists($this->options['currentDomain'], $this->options[$this->root])) {
-            unset($this->options[$this->root][$this->options['currentDomain']]);
-            // $this->currentDomain = array_key_first($this->options[$this->root]);
+        if (count($this->options[$this->root]) > 0 && key_exists($dom, $this->options[$this->root])) {
+            unset($this->options[$this->root][$dom]);
+            $this->currentDomain = array_key_first($this->options[$this->root]);
 
             return 'success';
         } else {
